@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "reflectance"
+version = "0.0.1"
+authors = [
+  { name="Gauthier Patin", email="g.patin@monemail.com" },
+]
+dynamic = ['readme']
+description = "Package to manipulate reflectance data"
+requires-python = ">=3.8"
+license = {file = "LICENSE"} 
+keywords = ["reflectance spectroscopy", "colour measurement"]
+classifiers = [
+    "Programming Language :: Python :: 3", 
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",   
+    "Operating System :: OS Independent",
+]
+
+dependencies = [
+    "colour-science",
+    "seaborn",
+    "uncertainties",
+    "matplotlib",
+    "pandas",
+    "openpyxl",
+    "jupyterlab",
+    "xarray",
+    "ipywidgets",
+]
+
+[project.urls]
+Homepage = "https://github.com/g-patin/reflectance"
+
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+reflectance = ['datasets/*', '*.json', '*.png']
+

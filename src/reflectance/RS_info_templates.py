@@ -1,0 +1,30 @@
+
+device_info = ["[DEVICE INFO]",
+        "device_ID",
+        "brand",
+        "model",                
+        "measurement_mode",
+        "zoom",
+        "iris",
+        "geometry",
+        "lamp",
+        "filter_ill",
+        "fiber_ill",
+        "fiber_coll",
+        "distance_ill_mm",
+        "distance_coll_mm",  
+        "specular_component",    
+        "white_reference",
+]
+
+analysis_info = [
+    "[ANALYSIS INFO]",
+        "meas_id",
+        "group",
+        "group_description",
+        "spot_size_mm",
+        "background",        
+        "integration_time_ms",
+        "average",        
+        "measurements_N",        
+]

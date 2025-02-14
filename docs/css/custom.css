@@ -1,0 +1,29 @@
+.md-header__logo {
+    height: 10px;  /* Adjust this value to control the logo size */
+}
+
+.output-area {
+    background-color: #ffffff;    
+    padding: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    overflow-x: auto; /* Enable horizontal scrolling */
+    overflow-y: auto; /* Enable vertical scrolling */
+    width: 100%; /* Adjust the width as needed */
+    white-space: nowrap; /* Prevent text from wrapping */ 
+    min-height: 20px;
+    font-family: Helvetica;
+    font-size: 5;       
+}
+
+.img-small {
+    width: 400px;
+}
+
+.img-medium {
+    width: 500px;
+}
+
+.img-large {
+    width: 700px;
+}
