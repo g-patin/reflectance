@@ -14,7 +14,7 @@ from . import databases
 from . import RS_info_templates
 
 
-def RS_Tidas(files: list, filenaming:Optional[str] = 'none', folder:Optional[str] = '.', db:Optional[bool] = False, comment:Optional[str] = '', wanted_wl:Optional[tuple] = 'default', device_ID:Optional[str] = 'default', authors:Optional[str] = 'XX', white_reference:Optional[bool] = 'default', observer:Optional[str] = 'default', illuminant:Optional[str] = 'default', background:Optional[str] = 'black', delete_files:Optional[bool] = True, return_filename:Optional[bool] = True):
+def RS_Tidas(files: list, device_ID:Optional[str] = 'default', db:Optional[bool] = 'default', filenaming:Optional[str] = 'none', folder:Optional[str] = '.',  comment:Optional[str] = '', interpolation_wl:Optional[tuple] ='default', rounding_sp:Optional[int] = 'none',  authors:Optional[str] = 'XX', white_standard:Optional[bool] = 'default', observer:Optional[str] = 'default', illuminant:Optional[str] = 'default', background:Optional[str] = 'black', delete_files:Optional[bool] = True, return_filename:Optional[bool] = True):
 
     # check whether the objects and projects databases have been created    
     if db:    
@@ -101,15 +101,15 @@ def RS_Tidas(files: list, filenaming:Optional[str] = 'none', folder:Optional[str
         authors_names = authors
 
 
-    # retrieve the white reference info
-    if white_reference == 'default' and db == True:
+    # retrieve the white standard info
+    if white_standard == 'default' and db == True:
         if len(DB.get_colorimetry_info()) == 0:
-            white_reference = ''
+            white_standard = 'undefined'
         else:
-            white_reference_ID = DB.get_colorimetry_info().loc['white_reference']['value']
+            white_standard_ID = DB.get_colorimetry_info().loc['white_standard']['value']
 
-    elif white_reference == 'default' and db == False:
-        white_reference = 'undefined'
+    elif white_standard == 'default' and db == False:
+        white_standard = 'undefined'
     
 
     # retrieve the general device info
@@ -177,7 +177,7 @@ def RS_Tidas(files: list, filenaming:Optional[str] = 'none', folder:Optional[str
             date_time,
             comment,
         ]
-
+        
 
         # define the device parameters and values
         if db:
@@ -211,7 +211,7 @@ def RS_Tidas(files: list, filenaming:Optional[str] = 'none', folder:Optional[str
                 "distance_ill_mm",
                 "distance_coll_mm",
                 specular_component,             
-                white_reference,
+                white_standard,
             ]
 
         else:
@@ -226,10 +226,15 @@ def RS_Tidas(files: list, filenaming:Optional[str] = 'none', folder:Optional[str
 
         # create df_info to be saved
 
-        if db == False:            
+        if db == False:   
+                       
+            if "_" in stemName:
+                meas_id = stemName.split('_')[0]
+            else:
+                meas_id = stemName
 
-            info_parameters = parameters_general_info + parameters_device + parameters_colorimetry
-            info_values = values_general_info + values_device + values_colorimetry
+            info_parameters = parameters_general_info + ['meas_id'] + parameters_device + parameters_colorimetry
+            info_values = values_general_info + [meas_id] + values_device + values_colorimetry
 
         else:
 
@@ -260,7 +265,7 @@ def RS_Tidas(files: list, filenaming:Optional[str] = 'none', folder:Optional[str
                 print(f'Object ID "{object_id}" not registered. If you want to use the databases, please first register the projects and objects in the databases using the function add_project() and add_object().')
                 return None
 
-            integration_time = int(float(df_params.loc['It']['value']))
+            integration_time = int(float((df_params.loc['It']['value']).replace(',','.')))
             average = int(float(df_params.loc['Aver']['value']))            
             measurements_N = ''  # is defined at the end of the function      
             spot_size = ''      
@@ -289,18 +294,21 @@ def RS_Tidas(files: list, filenaming:Optional[str] = 'none', folder:Optional[str
 
         # Fill in some of the info values
         
-        for param in parameters_device[2:] + ['spot_size_mm', 'background']:
-
-            if param in DB.get_db_config()['comments'][device_ID]:
-                pass
-            elif param in DB.get_db_config()['devices'][device_ID].keys():
-                df_info.loc[param] = DB.get_db_config()['devices'][device_ID][param]
-            else:
-                df_info.loc[param] = 'undefined'
+        if db:
+            for param in parameters_device[2:] + ['spot_size_mm', 'background']:
+                print(param)
+                if param in DB.get_db_config()['comments'][device_ID]:
+                    pass
+                elif param in DB.get_db_config()['devices'][device_ID].keys():
+                    df_info.loc[param] = DB.get_db_config()['devices'][device_ID][param]
+                elif param in DB.get_db_config()['colorimetry'].keys():
+                    df_info.loc[param] = DB.get_db_config()['colorimetry'][param]
+                else:
+                    df_info.loc[param] = 'undefined'
+            
+            for parameter,value in zip(comments_parameters, comments_values):
+                df_info.loc[parameter] = value
         
-        for parameter,value in zip(comments_parameters, comments_values):
-            df_info.loc[parameter] = value
-
         
         ####### PROCESS THE SPECTRAL DATA ########
 
@@ -320,19 +328,32 @@ def RS_Tidas(files: list, filenaming:Optional[str] = 'none', folder:Optional[str
             df_rawdata = df_rawdata.set_index('wavelength_nm')
             
 
-        # interpolate the spectral data
-        if isinstance(wanted_wl, tuple):
-            wanted_wl = pd.Index(np.arange(wanted_wl[0],wanted_wl[1],wanted_wl[2]), name='wavelength_nm')
+        
+        # whether to interpolate the spectral data
+        if interpolation_wl == 'none':
+            wanted_wl = df_rawdata.index
+
+        elif isinstance(interpolation_wl, tuple):
+            wanted_wl = pd.Index(np.arange(interpolation_wl[0],interpolation_wl[1],interpolation_wl[2]), name='wavelength_nm')
         
         else:
-            wanted_wl = pd.Index(np.arange(305,1141), name='wavelength_nm')
+            print(f"The '{interpolation_wl}' value that you entered is not valid. Enter either 'none' if you don't want any interpolation or a tuple of three values (start_wl, end_wl, step).")
+            return
 
         df_sp = pd.DataFrame(data = sip.interp1d(df_rawdata.index, df_rawdata, axis = 0)(wanted_wl),
                             index = wanted_wl,
                             columns = df_rawdata.columns)
         
         # rounding the spectral data
-        df_sp = np.round(df_sp/100,4)      
+        if rounding_sp == 'none':
+            df_sp = df_sp/100
+        elif isinstance(rounding_sp,int):
+            df_sp = np.round(df_sp/100,rounding_sp)  
+        else:
+            print(f"The value '{rounding_sp}' you entered is not valid. Please enter a positive integer.")
+            return  
+
+        print(df_sp)  
 
 
         ####### CONVERT THE REFLECTANCE VALUES TO COLORIMETRIC VALUES ########
