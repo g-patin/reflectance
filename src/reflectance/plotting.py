@@ -172,13 +172,13 @@ def CIELAB(data, stds=None, colors=None, fontsize=24, legend_labels=[], title=No
         legend_labels = ['none'] * len(data)
         
     # define std values
-    if stds is None or list(set(stds))[0] is None:
-        stds = [np.zeros(3) for _ in data]
-
+    if stds is None:
+        stds = [np.zeros(3) for _ in data]   
+    
     
     # plot the data
     for i, (el_data, label, std) in enumerate(zip(data, legend_labels, stds)):
-
+        
         # compute dE values
         if dE:            
             dE00 = np.round(np.array([colour.delta_E(el_data[0][:3], d[:3]) for d in el_data]),3)
@@ -192,9 +192,9 @@ def CIELAB(data, stds=None, colors=None, fontsize=24, legend_labels=[], title=No
                
         # define the colors and color_line of the markers        
         if colors == 'sample':
-            Lab = np.array([L, a, b]).transpose()            
+            Lab = np.array([L, a, b]).transpose()               
             srgb = colour.XYZ_to_sRGB(colour.Lab_to_XYZ(Lab), D65).clip(0, 1)
-            color = srgb[0]            
+            color = srgb                     
             
         elif colors == None:
             color = None           
@@ -204,6 +204,7 @@ def CIELAB(data, stds=None, colors=None, fontsize=24, legend_labels=[], title=No
 
         else:
             color = colors[i]            
+        
         
      
         # plot single colour points or grouped colour points
@@ -219,18 +220,11 @@ def CIELAB(data, stds=None, colors=None, fontsize=24, legend_labels=[], title=No
             AB.axvline(0, color="black", lw=0.5)                       
 
         else:             
-            Lb.errorbar(L[1:], b[1:], yerr=std[2], xerr=std[0], fmt='o', color=color, **kwargs)
-            ab.scatter(a[1:], b[1:], color=color, label = label, **kwargs)            
-            aL.scatter(a[1:], L[1:], color=color, **kwargs)
+            Lb.errorbar(L, b, yerr=std[2], xerr=std[0], fmt='o', color=color, **kwargs)
+            ab.scatter(a, b, color=color, label = label, **kwargs)            
+            aL.scatter(a, L, color=color, **kwargs)
 
-            Lb.scatter(L[0], b[0], marker = 'x', color='k', s=120, **kwargs)
-            ab.scatter(a[0], b[0], marker = 'x', color='k', s=120, **kwargs)
-            plot_aL = aL.scatter(a[0], L[0], marker = 'x', color='k', s=120, **kwargs) 
             
-            if obs_ill == None:
-                aL.legend([plot_aL], [f'Start'], fontsize=fontsize-5)
-            else:
-                aL.legend([plot_aL], [f'Start\n{obs_ill}'], fontsize=fontsize-5)
 
             # plot the dE values or the a*b* values
             if dE:
