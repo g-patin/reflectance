@@ -724,12 +724,11 @@ class DB:
         
         # create several text files
 
-        with open(Path(folder_path) / 'MFT_devices.txt', 'w') as f:
+        with open(Path(folder_path) / 'devices.txt', 'w') as f:
             f.write('Id,name,description,process_function\n')
             
-        with open(Path(folder_path) / 'White_references.txt', 'w') as f:
-            f.write('Id,description\n')
-            f.write('WR1,Fotonowy-fotolon-PTFE\n')
+        with open(Path(folder_path) / 'white_standards.txt', 'w') as f:
+            f.write('Id,description\n')            
 
         with open(Path(folder_path) / 'object_creators.txt', 'w') as f:
             f.write('surname,name')
@@ -966,14 +965,18 @@ class DB:
             return None
       
 
-    def get_white_references(self):
+    def get_white_standards(self):
 
-        if (Path(self.folder_db) / 'white_references.txt').exists():
-            df_references = pd.read_csv(Path(self.folder_db) / 'white_references.txt')
-            return df_references
+        if self.get_db_path == None:
+            
+            print()
+
+        if (Path(self.folder_db) / 'white_standards.txt').exists():
+            df_standards = pd.read_csv(Path(self.folder_db) / 'white_standards.txt')
+            return df_standards
         
         else:
-            print(f'The file {Path(self.folder_db) / "white_references.txt"} is not existing. Make sure to create one by running the function "create_DB" from the microfading package.')
+            print(f'The file {Path(self.folder_db) / "white_standards.txt"} is not existing. Make sure to create one by running the function "create_DB" from the reflectance package.')
             return
 
     
@@ -1153,9 +1156,9 @@ class DB:
             style = style
         )
 
-        wg_white_ref = ipw.Dropdown(
-            description = 'White reference',            
-            options = self.get_white_references()['Id'].values,
+        wg_white_standard = ipw.Dropdown(
+            description = 'White standard',            
+            options = self.get_white_standards()['Id'].values,
             style = style
         )
 
@@ -1184,7 +1187,7 @@ class DB:
             config["colorimetry"] = {
                 "observer": f'{wg_observer.value}deg',
                 "illuminant": wg_illuminant.value, 
-                "white_reference": wg_white_ref.value,                               
+                "white_standard": wg_white_standard.value,                               
             }
             # Save the updated config back to the JSON file
             with open(self.config_file, "w") as f:
@@ -1197,7 +1200,7 @@ class DB:
         
         recording.on_click(button_record_pressed)
 
-        display(ipw.VBox([wg_observer, wg_illuminant, wg_white_ref]))
+        display(ipw.VBox([wg_observer, wg_illuminant, wg_white_standard]))
         display(ipw.HBox([recording, button_record_output]))
    
     
