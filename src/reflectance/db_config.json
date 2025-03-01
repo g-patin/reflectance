@@ -1,62 +1,10 @@
 {
-    "databases": {
-        "path_folder": "/home/gpatin/Documents/RCE/databases/",
-        "usage": true
-    },
-    "devices": {
-        "MSP2": {
-            "brand": "zeiss",
-            "model": "MSPtwo",
-            "geometry": "0:45",
-            "fiber_ill": "none",
-            "fiber_coll": "FO001",
-            "specular_component": "partly-included",
-            "filter_ill": "none",
-            "lamp": "HAL",
-            "white_reference": "WR1"
-        },
-        "MSP1": {
-            "brand": "Zeiss_JM Analytik AG",
-            "model": "AxioImager.A2m_TidasS800",
-            "geometry": "0:0",
-            "fiber_ill": "none",
-            "fiber_coll": "FO001",
-            "specular_component": "unknown",
-            "distance_coll_mm": "nan",
-            "distance_ill_mm": "nan",
-            "iris": "undefined",
-            "measurement_mode": "nan"
-        }
-    },
-    "comments": {
-        "MSP1": [
-            "lamp",
-            "filter_ill",
-            "zoom",
-            "spot_size_mm",
-            "background"
-        ]
-    },
-    "colorimetry": {
-        "observer": "10deg",
-        "illuminant": "D65",
-        "white_reference": "WR1"
-    },
-    "fibers": {
-        "F02": "Av-400um-2",
-        "F01": "JM_18 009 59",
-        "FO001": "JM_18 009 59"
-    },
-    "filters": {
-        "filter1": "EpiBF",
-        "filter2": "EpiDF",
-        "filter3": "EpiPol",
-        "filter4": "Pol"
-    },
-    "lamps": {
-        "HAL03": "OceanOptics_halogen"
-    },
-    "objectives": {
-        "10x": "EC Epiplan-NEOFLUAR_10x/0.25HD"
-    }
+    "databases": {},
+    "devices": {},
+    "comments": {},
+    "colorimetry": {},
+    "fibers": {},
+    "filters": {},
+    "lamps": {},
+    "objectives": {}
 }
