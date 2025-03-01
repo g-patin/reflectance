@@ -14,7 +14,7 @@ device_info = ["[DEVICE INFO]",
         "distance_ill_mm",
         "distance_coll_mm",  
         "specular_component",    
-        "white_reference",
+        "white_standard",
 ]
 
 analysis_info = [
