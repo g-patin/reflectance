@@ -53,25 +53,31 @@ labels_eq = {
 #### DATABASES RELATED FUNCTIONS ####
 
 
-def DB():
+def is_DB(info_msg:Optional[bool] = True):
     "Check whether the databases files were created."
 
     # instantiate a DB class object
     DB = databases.DB()
+    DB_config = DB.get_db_config()
 
-    if DB.folder_db.stem == "folder_path":
-        print('The databases files have not been created. To create them, run the command "mf.create_DB(<folder_path_of_your_choice>)".')
-        return
-    
-    else:
-        db_files = ['DB_projects.csv', 'DB_objects.csv','institutions.txt', 'persons.txt','object_types.txt', 'object_techniques.txt', 'object_supports.txt', 'object_creators.txt']
+    if len(DB_config['databases']) == 0:
+        print('The databases have not been registered nor configured. If you wish to create the database files, use the function "create_DB". If the database files have been created but you just want to set the path of the databases folder, then use the function "set_DB".')
         
-        if all(list(map(os.path.isfile, [str(Path(DB.folder_db)/x) for x in db_files]))):
-            print(f'All the databases were created and can be found in the following directory: {DB.folder_db}')
+        return False
 
-        else:
+    db_files = ['DB_projects.csv', 'DB_objects.csv','institutions.txt', 'persons.txt','object_types.txt', 'object_techniques.txt', 'object_supports.txt', 'object_creators.txt']
+        
+    if all(list(map(os.path.isfile, [str(Path(DB.folder_db)/x) for x in db_files]))):
+        if info_msg:
+            print(f'All the databases were created and can be found in the following directory: {DB.folder_db}')            
+        return True
+
+    else:
+        if info_msg:
             print('The databases files were created, but one or several files are currently missing.')
             print(f'The files should be located in the following directory: {DB.folder_db}')
+
+        return False
 
 
 def get_datasets(device:Optional[str] = 'KM', rawfiles:Optional[bool] = False, stdev:Optional[bool] = False):
@@ -236,23 +242,25 @@ def get_path_DB():
         If dabases have been created, it will return the absolute path as a string. Otherwise, it will only print a statement indicating no databases were found.    
     """
     
-    # instantiate a DB class object
-    DB = databases.DB()   
+    if is_DB(info_msg=False):
 
-    
-    if DB.folder_db.stem == "folder_path":
-        print('Databases have not been created or have been deleted. Please, create databases by running the function "create_DB" from the reflectance package.')
-        return None
-    
-    else:    
-        if 'DB_projects.csv' in os.listdir(DB.folder_db) and 'DB_objects.csv' in os.listdir(DB.folder_db):
+        # instantiate a DB class object
+        DB = databases.DB()   
 
-            print(f'DB_projects.csv and DB_objects.csv files can be found in the following folder: {DB.folder_db}')    
-            return DB.folder_db       
-
-        else:
+        
+        if DB.folder_db.stem == "folder_path":
             print('Databases have not been created or have been deleted. Please, create databases by running the function "create_DB" from the reflectance package.')
             return None
+        
+        else:    
+            if 'DB_projects.csv' in os.listdir(DB.folder_db) and 'DB_objects.csv' in os.listdir(DB.folder_db):
+
+                print(f'DB_projects.csv and DB_objects.csv files can be found in the following folder: {DB.folder_db}')    
+                return DB.folder_db       
+
+            else:
+                print('Databases have not been created or have been deleted. Please, create databases by running the function "create_DB" from the reflectance package.')
+                return None
 
 
 def get_creators():
@@ -264,8 +272,9 @@ def get_creators():
         It returns the list of creators inside a pandas dataframe with two columns: 'surname', 'name'
     """
     
-    DB = databases.DB()
-    return DB.get_creators()
+    if is_DB(info_msg=False):
+        DB = databases.DB()
+        return DB.get_creators()
 
 
 def get_DB(db:Optional[str] = 'all'):
@@ -305,8 +314,9 @@ def get_institutions():
         It returns the list of institutions inside a pandas dataframe with two columns: 'name', 'acronym'
     """
 
-    DB = databases.DB()
-    return DB.get_institutions()
+    if is_DB(info_msg=False):
+        DB = databases.DB()
+        return DB.get_institutions()
 
 
 def get_persons():
@@ -318,8 +328,9 @@ def get_persons():
         It returns the list of persons inside a pandas dataframe with three columns: 'name', 'surname', 'initials'
     """
 
-    DB = databases.DB()
-    return DB.get_persons()
+    if is_DB(info_msg=False):
+        DB = databases.DB()
+        return DB.get_persons()
 
 
 def get_devices():
@@ -331,8 +342,9 @@ def get_devices():
         It returns the list of devices inside a pandas dataframe with four columns: 'Id', 'name', 'description', 'process_function'
     """
 
-    DB = databases.DB()    
-    return DB.get_devices()
+    if is_DB(info_msg=False):
+        DB = databases.DB()    
+        return DB.get_devices()
 
 
 def get_colorimetry_info():
@@ -344,23 +356,24 @@ def get_colorimetry_info():
         It returns the information inside a dataframe if they have been recorded.
     """
 
-    DB = databases.DB()    
-    return DB.get_colorimetry_info()
+    if is_DB(info_msg=False):
+        DB = databases.DB()    
+        return DB.get_colorimetry_info()
 
 
-
-def get_white_references():
-    """Retrieve the list of white standard references that have been registered in the white_references.txt file.
+def get_white_standards():
+    """Retrieve the list of white standard references that have been registered in the white_standards.txt file.
 
     Returns
     -------
     pandas dataframe
         It returns the list of references inside a pandas dataframe with two columns: 'Id', 'description'
-    """
-
-    DB = databases.DB()    
-    return DB.get_white_references()
-
+    """ 
+    
+    if is_DB(info_msg=False):
+        DB = databases.DB()
+        return DB.get_white_standards()
+        
 
 def add_new_creator():
     """Record a new object creator inside the object_creators.txt file.
@@ -582,7 +595,7 @@ def add_references():
 
 
 
-def process_rawdata(files: list, device: str, filenaming:Optional[str] = 'none', folder:Optional[str] = '.', db:Optional[bool] = False, comment:Optional[str] = '', wanted_wl:Optional[tuple] = 'default', authors:Optional[str] = 'XX', white_reference:Optional[str] = 'default', observer:Optional[str] = 'default', illuminant:Optional[str] = 'default', delete_files:Optional[bool] = True, return_filename:Optional[bool] = True):
+def process_rawdata(files: list, device: str, filenaming:Optional[str] = 'none', folder:Optional[str] = '.', db:Optional[bool] = 'default', comment:Optional[str] = '', interpolation_wl:Optional[tuple] = 'default', rounding_sp:Optional[int] = 4, authors:Optional[str] = 'XX', white_standard:Optional[str] = 'default', observer:Optional[str] = 'default', illuminant:Optional[str] = 'default', delete_files:Optional[bool] = False, return_filename:Optional[bool] = True):
     """Process the reflectance spectroscopy raw files created by the software that performed the analysis. 
 
     Parameters
@@ -632,7 +645,59 @@ def process_rawdata(files: list, device: str, filenaming:Optional[str] = 'none',
         It returns an excel file composed of three tabs (info, CIELAB, spectra).
     """
 
-    return process_rawfiles.RS_Tidas(files=files, filenaming=filenaming, folder=folder, db=db, comment=comment, device_ID=device, wanted_wl=wanted_wl, authors=authors, white_reference=white_reference, observer=observer, illuminant=illuminant, delete_files=delete_files, return_filename=return_filename)
+    # Load the databases function and config file
+    DB = databases.DB()
+    db_config = DB.get_db_config()
+    
+    
+    # Set the db value
+    if db == 'default':
+        if len(db_config['databases']) == 0:
+            db = False            
+        else:
+            db = DB.get_db_config()['databases']['usage']
+
+    
+    # Set the observer value
+    if observer == 'default':        
+        if len(db_config['colorimetry']) == 0:
+            observer = '10deg'
+        else:
+            observer = DB.get_colorimetry_info().loc['observer'].values[0]
+
+    
+    # Set the illuminant value
+    if illuminant == 'default':
+        if len(db_config['colorimetry']) == 0:
+            illuminant = 'D65'
+        else:
+            illuminant = DB.get_colorimetry_info().loc['illuminant'].values[0]
+
+    
+    # Set the white reference value
+    if white_standard == 'default':
+        if len(db_config['colorimetry']) == 0:
+            white_standard = 'undefined'
+        else:
+            white_standard = DB.get_colorimetry_info().loc['white_standard'].values[0]  
+
+    # Set the wavelengths interpolation behaviour
+    if interpolation_wl == 'default' and db == False:
+        interpolation_wl = 'none'
+    
+    print(db, white_standard,illuminant,observer)
+    
+    # Run the process_rawfiles function according to the microfading device
+    if "_" in device:        
+
+        if device.split('_')[0].lower() == 'tidas':
+            return process_rawfiles.RS_Tidas(files=files, filenaming=filenaming, folder=folder, db=db, comment=comment, device_ID=device, interpolation_wl=interpolation_wl, rounding_sp=rounding_sp, authors=authors, white_standard=white_standard, observer=observer, illuminant=illuminant, delete_files=delete_files, return_filename=return_filename)
+
+
+    else:        
+        
+        if device.lower() == 'tidas': 
+            return process_rawfiles.RS_Tidas(files=files, filenaming=filenaming, folder=folder, db=db, comment=comment, device_ID=device, interpolation_wl=interpolation_wl, rounding_sp=rounding_sp, authors=authors, white_standard=white_standard, observer=observer, illuminant=illuminant, delete_files=delete_files, return_filename=return_filename)
 
 
 
@@ -658,6 +723,14 @@ def set_comments_info():
 
     DB = databases.DB()
     return DB.set_comment_info()
+
+
+def set_DB(folder_path:Optional[str] = '', use:Optional[bool] = True):
+    """Record the databases info in the db_config.json file of the reflectance package.
+    """
+
+    DB = databases.DB()
+    return DB.set_db(folder_path=folder_path, use=use)
 
 
 def set_devices_info(device_ID):
@@ -702,7 +775,7 @@ class RS(object):
         return f'Reflectance data class - Number of files = {len(self.files)}'
        
     
-    def get_spectra(self, wl_range:Union[int, float, list, tuple] = 'all', spectral_mode:Optional[str] = 'rfl', smoothing:Optional[list] = [1,0]):
+    def get_spectra(self, wl_range:Union[int, float, list, tuple] = 'all', spectral_mode:Optional[str] = 'R', smoothing:Optional[tuple] = (1,0), derivation:Optional[bool] = False):
         """Retrieve the reflectance spectra related to the input files.
 
         Parameters
@@ -715,11 +788,11 @@ class RS(object):
             A tuple of two or three values (min, max, step) will take the range values between these two first values. By default the step is equal to 1.
        
         spectral_mode : string, optional
-            When 'rfl', it returns the reflectance spectra
-            When 'abs', it returns the absorption spectra using the following equation: A = -log(R)
+            When 'R' or 'r', it returns the reflectance spectra
+            When 'A' or 'a, it returns the absorption spectra using the following equation: A = -log(R)
 
-        smoothing : list of two integers, optional
-            Whether to smooth the reflectance data using the Savitzky-Golay filter from the Scipy package, by default [1,0]
+        smoothing : tuple of two integers, optional
+            Whether to smooth the reflectance data using the Savitzky-Golay filter from the Scipy package, by default (1,0)
             The first integer corresponds to the window length and should be less than or equal to the size of a reflectance spectrum. The second integer corresponds to the polyorder parameter which is used to fit the samples. The polyorder value must be less than the value of the window length.
 
 
@@ -737,11 +810,11 @@ class RS(object):
             df_sp = file[0]            
 
             # whether to compute the absorption spectra
-            if spectral_mode == 'abs':
+            if spectral_mode.upper() == 'A':
                 df_sp = np.log(df_sp) * (-1)
                                        
 
-            # Set the wavelengths
+            # set the wavelengths
             if isinstance(wl_range, tuple):
                 if len(wl_range) == 2:
                     wl_range = (wl_range[0],wl_range[1],1)
@@ -761,12 +834,26 @@ class RS(object):
             df_sp = df_sp.loc[wavelengths]
 
             
-            # Smooth the data            
+            # smooth the data            
             df_sp = pd.DataFrame(savgol_filter(df_sp.T.values, window_length=smoothing[0], polyorder=smoothing[1]).T, columns=df_sp.columns, index=wavelengths)
             
             
             # append the spectral data
             data_sp.append(df_sp) 
+
+
+        # concat the list of spectra into a dataframe
+        data_sp = pd.concat(data_sp, axis=1)
+
+        
+        # whether to compute the first derivation values
+        if derivation:
+            data_sp = pd.DataFrame(np.gradient(data_sp, axis=0), index=data_sp.index, columns=data_sp.columns)
+
+
+        # rename the columns and index
+        data_sp.columns.names = ['meas_ids', None]
+        data_sp.index.names = ['wavelength_nm']
 
         return data_sp
     
@@ -786,61 +873,27 @@ class RS(object):
         -------
         A list of pandas dataframes
             It returns the values of the wanted colour coordinates inside dataframes where each coordinate corresponds to a column.
-        """
-                
+        """                
                     
         # Retrieve the data        
         cielab_data = self.read_files(sheets=['CIELAB'])
         cielab_data = [x[0] for x in cielab_data]
-
 
         index_data = [x.set_index(x.columns[0]) for x in cielab_data]
         if coordinates == 'all':
             coordinates = ['L*', 'a*','b*', 'C*', 'h', 'x', 'y']
 
         wanted_data = [x.loc[coordinates] for x in index_data]
+        concat_data = pd.concat(wanted_data, axis=1, ignore_index=False)
+        
 
         if index == False:
-            wanted_data = [x.reset_index() for x in wanted_data]
+            concat_data = concat_data.reset_index()
         
-        return wanted_data
+        else:
+            concat_data.index.names = ['coordinates']
 
-        # Create an empty list with all the colorimetric data
-        all_data = []
-              
-        # Compute the delta LabCh values and add the data into the list all_data  
-        for data in cielab_data:
-
-            # for data with std values
-            if sorted(set(data.columns.get_level_values(1))) == ['mean', 'std']:
-                data_dLabCh = delta_coord = [unumpy.uarray(d[coord, 'mean'], d[coord, 'std']) - unumpy.uarray(d[coord, 'mean'], d[coord, 'std'])[0] for coord in ['L*', 'a*', 'b*', 'C*', 'h'] for d in [data]]
-
-                delta_means = [unumpy.nominal_values(x) for x in delta_coord]
-                delta_stds = [unumpy.std_devs(x) for x in delta_coord]
-
-                delta_coord_mean = [(f'd{coord}', 'mean') for coord in ['L*', 'a*', 'b*', 'C*', 'h']]
-                delta_coord_std = [(f'd{coord}', 'std') for coord in ['L*', 'a*', 'b*', 'C*', 'h']]
-
-                for coord_mean,delta_mean,coord_std,delta_std in zip(delta_coord_mean,delta_means, delta_coord_std,delta_stds):                    
-                    data[coord_mean] = delta_mean
-                    data[coord_std] = delta_std
-
-                    all_data.append(data)          
-                
-            # for data without std values
-            else:
-                data_LabCh = data[['L*','a*','b*','C*','h']]
-                data_dLabCh = data_LabCh - data_LabCh.iloc[0,:]
-                data_dLabCh = data_dLabCh.rename(columns={'L*': 'dL*', 'a*': 'da*' ,'b*': 'db*','C*': 'dC*','h': 'dh'}, level=0)
-                all_data.append(pd.concat([data,data_dLabCh], axis=1))
-
-                            
-
-        # Whether to set the index
-        if index:
-            all_data = [x.set_index(x.columns[0]) for x in all_data]
-        
-        return all_data       
+        return concat_data       
            
    
     def read_files(self, sheets:Optional[list] = ['info', 'CIELAB', 'spectra']):
@@ -891,188 +944,8 @@ class RS(object):
                 files.append([df_info, df_sp])
 
         return files
-     
-
-    def get_data(self, data:Union[str, list] = 'all', xarray:Optional[bool] = False):
-        """Retrieve the microfading data.
-
-        Parameters
-        ----------
-        data : str|list, optional
-            Possibility to select the type of data, by default 'all'.
-            When 'all', it returns all the data (spectral and colorimetric).
-            When 'sp', it only returns the spectral data.
-            When 'cl', it only returns the colorimetric data.  
-            When 'Lab', it returns the CIE L*a*b* values.
-            A list of strings can be entered to select specific colourimetric data among the following: ['dE76,'dE00','dR_vis', 'L*', 'a*', 'b*', 'C*', 'h'].
-
-        xarray : bool, optional
-            When True, the data are returned as an xarray.Dataset object, else as pandas dataframe object, by default False.
-
-        Returns
-        -------
-        It returns a list of pandas dataframes or xarray.Dataset objects
-        """
-
-        all_files = self.read_files(sheets=['spectra','CIELAB'])
-        all_data = []
-        data_sp = [] 
-        data_cl = [] 
-
-        for data_file in all_files:
-
-            df_sp = data_file[0]
-            df_cl = data_file[1]
-
-            if sorted(set(df_sp.columns.get_level_values(1))) == ['mean', 'std']:
-                sp_n = df_sp.xs('mean', level=1, axis=1).values
-                sp_s = df_sp.xs('std', level=1, axis=1).values
-
-                L_n = df_cl["L*","mean"].values
-                a_n = df_cl["a*","mean"].values
-                b_n = df_cl["b*","mean"].values
-                C_n = df_cl["C*","mean"].values
-                h_n = df_cl["h","mean"].values
-                dE76_n = df_cl["dE76","mean"].values
-                dE00_n = df_cl["dE00","mean"].values
-                dR_vis_n = df_cl["dR_vis","mean"].values
-
-                L_s = df_cl["L*","std"].values
-                a_s = df_cl["a*","std"].values
-                b_s = df_cl["b*","std"].values
-                C_s = df_cl["C*","std"].values
-                h_s = df_cl["h","std"].values
-                dE76_s = df_cl["dE76","std"].values
-                dE00_s = df_cl["dE00","std"].values
-                dR_vis_s = df_cl["dR_vis","std"].values
-                
-            else:
-                sp_n = df_sp.xs('value', level=1, axis=1).values
-                sp_s = df_sp.xs('value', level=1, axis=1)
-                sp_s.loc[:,:] = 0
-                sp_s = sp_s.values
-
-                L_n = df_cl["L*","value"].values
-                a_n = df_cl["a*","value"].values
-                b_n = df_cl["b*","value"].values
-                C_n = df_cl["C*","value"].values
-                h_n = df_cl["h","value"].values
-                dE76_n = df_cl["dE76","value"].values
-                dE00_n = df_cl["dE00","value"].values
-                dR_vis_n = df_cl["dR_vis","value"].values
-
-                L_s = np.zeros(len(L_n))
-                a_s = np.zeros(len(a_n))
-                b_s = np.zeros(len(b_n))
-                C_s = np.zeros(len(C_n))
-                h_s = np.zeros(len(h_n))
-                dE76_s = np.zeros(len(dE76_n))
-                dE00_s = np.zeros(len(dE00_n))
-                dR_vis_s = np.zeros(len(dR_vis_n))
-            
-            wl = data_file[0].iloc[:,0].values
-            He = data_file[1]['He_MJ/m2','value'].values
-            Hv = data_file[1]['Hv_Mlxh','value'].values
-            t = data_file[1]['t_sec','value'].values
-            
-            spectral_data = xr.Dataset(
-                {
-                    'sp': (['wavelength','dose'], sp_n),
-                    'sp_s': (['wavelength','dose'], sp_s)                
-                },
-                coords={
-                    'wavelength': wl,   
-                    'dose': He,
-                    'He': ('dose', He),
-                    'Hv': ('dose', Hv),  # Match radiant energy
-                    't': ('dose', t)  # Match radiant energy
-                }
-            )
-
-            color_data = xr.Dataset(
-                {
-                    'L*': (['dose'], L_n),
-                    'a*': (['dose'], a_n),
-                    'b*': (['dose'], b_n),
-                    'C*': (['dose'], C_n),
-                    'h': (['dose'], h_n),
-                    'dE76': (['dose'], dE76_n),
-                    'dE00': (['dose'], dE00_n),
-                    'dR_vis': (['dose'], dR_vis_n),
-                    'L*_s': (['dose'], L_s),
-                    'a*_s': (['dose'], a_s),
-                    'b*_s': (['dose'], b_s),
-                    'C*_s': (['dose'], C_s),
-                    'h_s': (['dose'], h_s),
-                    'dE76_s': (['dose'], dE76_s),
-                    'dE00_s': (['dose'], dE00_s),
-                    'dR_vis_s': (['dose'], dR_vis_s),
-                },
-                coords={                    
-                    'He': ('dose',He),
-                    'Hv': ('dose',Hv),
-                    't': ('dose',t),
-                }
-            )                
-                    
-            sp = spectral_data.set_xindex(["He","Hv","t"])
-            cl = color_data.set_xindex(["He","Hv","t"])
-            combined_data = xr.merge([sp, cl])
-
-        all_data.append(combined_data)            
-        
-        
-        if data == 'all':
-            if xarray == False:                
-                [data_sp.append(x[0]) for x in all_files]
-                [data_cl.append(x[1]) for x in all_files]
-                return data_sp, data_cl
-            
-            else:
-                return all_data
-
-        elif data == 'sp':
-            if xarray == False:                
-                [data_sp.append(x[0]) for x in all_files]                                           
-            else:                
-                data_sp = [x.sp for x in all_data]
-                
-
-            return data_sp
-        
-        elif data == 'cl':
-            if xarray == False:
-                [data_cl.append(x[1]) for x in all_files]
-            else:
-                data_cl = [x[['L*','a*','b*','C*','h','dE76','dE00','dR_vis']] for x in all_data]
-            
-            return data_cl
-        
-        elif data == 'Lab':
-            if xarray == False:
-                [data_cl.append(x[1][['L*','a*','b*']]) for x in all_files]
-            else:
-                data_cl = [x[['L*','a*','b*']] for x in all_data]
-
-            return data_cl
-        
-        elif isinstance(data,list):
-            if xarray == False:
-                dic_doses = {'He': 'He_MJ/m2', 'Hv':'Hv_Mlxh', 't':'t_sec'}
-                data = [dic_doses[x] if x in dic_doses.keys() else x for x in data]
-                [data_cl.append(x[1][data]) for x in all_files]
-
-            else:
-                data = [elem for elem in data if elem not in ['Hv','He','t']]
-                data_cl = [x[data] for x in all_data]
-            
-            return data_cl
-        
-        else:
-            print("Enter a valid data parameter. It can either be a string ('sp', 'cl', 'Lab', 'all') or a list of strings ['dE00','dE76', 'L*', 'a*', 'b*', 'C*', 'h']")
-            return None
-
-    
+          
+  
     def get_metadata(self, labels:Optional[list] = 'all'):
         """Retrieve the metadata.
 
@@ -1130,9 +1003,9 @@ class RS(object):
         DB = databases.DB()
 
         if observer == 'default':
-            if isinstance(DB.get_colorimetry_info(), str):
+            if len(DB.get_colorimetry_info()) == 0:
                 observer = '10deg'
-            else:
+            else:                
                 observer = DB.get_colorimetry_info().loc['observer']['value']
 
         else:
@@ -1140,11 +1013,11 @@ class RS(object):
 
 
         if illuminant == 'default':
-            if isinstance(DB.get_colorimetry_info(), str):
+            if len(DB.get_colorimetry_info()) == 0:
                 illuminant = 'D65'
             else:
                 illuminant = DB.get_colorimetry_info().loc['illuminant']['value']
-        
+
         
         observers = {
             '10deg': 'cie_10_1964',
@@ -1158,34 +1031,27 @@ class RS(object):
         ccs_ill = colour.CCS_ILLUMINANTS[observers[observer]][illuminant]
 
         meas_ids = self.get_meas_ids               
-        df_sp = self.get_spectra()   
-        df_sp_nominal = [
-            df.loc[:, pd.IndexSlice[:, 'mean']] if 'mean' in df.columns.get_level_values(1)
-            else df.loc[:, pd.IndexSlice[:, 'value']]
-            for df in df_sp
-        ]
+        df_sp = self.get_spectra() 
+
+        cols_to_keep = df_sp.columns[df_sp.columns.get_level_values(1).isin(['value', 'mean'])] 
+        df_sp_nominal = df_sp[cols_to_keep]
 
         df_Lab = []
 
-        for df, meas_id in zip(df_sp_nominal, meas_ids):   
-            
-            Lab_values = pd.DataFrame(index=['L*','a*','b*']).T           
-            
-            for col in df.columns:
-                
-                sp = df[col]
-                wl = df.index
-                sd = colour.SpectralDistribution(sp,wl)                
+        df_Lab = pd.DataFrame(index=['L*','a*','b*']) 
+        wl = df_sp_nominal.index
 
-                XYZ = colour.sd_to_XYZ(sd,cmfs_observers[observer], illuminant=colour.SDS_ILLUMINANTS[illuminant])        
-                Lab = np.round(colour.XYZ_to_Lab(XYZ/100,ccs_ill),3)               
-                Lab_values = pd.concat([Lab_values, pd.DataFrame(Lab, index=['L*','a*','b*']).T], axis=0)
-                Lab_values.index = np.arange(0,Lab_values.shape[0])
+        for sp in df_sp_nominal.T.values:
 
-            Lab_values.columns = pd.MultiIndex.from_product([[meas_id], Lab_values.columns])  
-            df_Lab.append(Lab_values)
+            sd = colour.SpectralDistribution(sp,wl)
+            XYZ = colour.sd_to_XYZ(sd,cmfs_observers[observer], illuminant=colour.SDS_ILLUMINANTS[illuminant])        
+            Lab = np.round(colour.XYZ_to_Lab(XYZ/100,ccs_ill),3)
+            df_Lab = pd.concat([df_Lab, pd.DataFrame(Lab, index=['L*','a*','b*'])], axis=1)
 
-        return pd.concat(df_Lab, axis=1)           
+        df_Lab.columns = df_sp_nominal.columns
+        df_Lab.index.names = ['coordinates']
+        
+        return df_Lab         
               
      
     @property
@@ -1214,6 +1080,94 @@ class RS(object):
             return None
 
 
+    def compute_delta(self, coordinates:Optional[list] = ['dE00'], reference:Optional[str] = 'first'):
+
+        df_cl = self.get_cielab()
+        cols_to_keep = df_cl.columns[df_cl.columns.get_level_values(1).isin(['value', 'mean'])] 
+        df_cl_nominal = df_cl[cols_to_keep]
+
+        len_cl = df_cl_nominal.shape[1]
+        
+        if len_cl == 1:
+            print('Not enough spectra. There has to be at least two reflectance spectra.')
+            return
+        
+        # define the reference data
+        if reference == 'first':
+            reference_data = df_cl_nominal.iloc[:,0]
+        elif reference == 'last':
+            reference_data = df_cl_nominal.iloc[:,-1]
+        elif reference == 'mean':
+            reference_data = df_cl_nominal.mean(axis=1)
+        else:
+            print(f'The value "{reference}" you entered is invalid. Please enter one of the following possibilities: "first", "last", "mean".')
+            return
+        
+        
+        # compute the delta values
+        df_deltas = pd.DataFrame(df_cl_nominal.T.values - reference_data.values, index=df_cl_nominal.columns, columns=[f'd{x}' for x in df_cl_nominal.index]).T
+
+        if 'dE00' in coordinates:
+            dE00_values = [colour.delta_E(reference_data[['L*','a*','b*']].values, x) for x in df_cl_nominal.loc[['L*','a*','b*']].T.values]
+            df_dE00 = pd.DataFrame(dE00_values, index=df_deltas.columns, columns=['dE00']).T
+            df_deltas = pd.concat([df_deltas, df_dE00], axis=0)
+
+        if 'dE76' in coordinates:
+            dE76_values = [colour.delta_E(reference_data[['L*','a*','b*']].values, x, method='CIE 1976') for x in df_cl_nominal.loc[['L*','a*','b*']].T.values]
+            df_dE76 = pd.DataFrame(dE76_values, index=df_deltas.columns, columns=['dE76']).T
+            df_deltas = pd.concat([df_deltas, df_dE76], axis=0)
+
+        if 'dE94' in coordinates:
+            dE94_values = [colour.delta_E(reference_data[['L*','a*','b*']].values, x, method='CIE 1994') for x in df_cl_nominal.loc[['L*','a*','b*']].T.values]
+            df_dE94 = pd.DataFrame(dE94_values, index=df_deltas.columns, columns=['dE94']).T
+            df_deltas = pd.concat([df_deltas, df_dE94], axis=0)
+
+        if 'dE94T' in coordinates:
+            dE94T_values = [colour.delta_E(reference_data[['L*','a*','b*']].values, x, method='CIE 1994', textiles=True) for x in df_cl_nominal.loc[['L*','a*','b*']].T.values]
+            df_dE94T = pd.DataFrame(dE94T_values, index=df_deltas.columns, columns=['dE94T']).T
+            df_deltas = pd.concat([df_deltas, df_dE94T], axis=0)
+
+        if 'CAM02' in coordinates:
+            CAM02_values = [colour.delta_E(reference_data[['L*','a*','b*']].values, x, method='CAM02-UCS') for x in df_cl_nominal.loc[['L*','a*','b*']].T.values]
+            df_CAM02 = pd.DataFrame(CAM02_values, index=df_deltas.columns, columns=['CAM02']).T
+            df_deltas = pd.concat([df_deltas, df_CAM02], axis=0)
+
+        if 'CAM16' in coordinates:
+            CAM16_values = [colour.delta_E(reference_data[['L*','a*','b*']].values, x, method='CAM16-LCD') for x in df_cl_nominal.loc[['L*','a*','b*']].T.values]
+            df_CAM16 = pd.DataFrame(CAM16_values, index=df_cl_nominal.columns, columns=['CAM16']).T
+            df_deltas = pd.concat([df_cl_nominal, df_CAM16], axis=0)
+        
+        
+        # return wanted values
+        df_wanted = df_deltas.loc[coordinates]
+        return df_wanted
+
+    
+    def compute_mcdm(self, rounding:Optional[int] = 3):
+
+        df_cl = self.get_cielab(coordinates=['L*','a*','b*'])
+        cols_to_keep = df_cl.columns[df_cl.columns.get_level_values(1).isin(['value', 'mean'])] 
+        df_cl_nominal = df_cl[cols_to_keep]
+
+        len_cl = df_cl_nominal.shape[1]    
+
+        if len_cl == 1:
+            print('Not enough spectra. There has to be at least two reflectance spectra.')
+            return
+        
+        Lab_n = df_cl_nominal.mean(axis=1).values   
+        dEs = []
+
+        for meas in df_cl_nominal.columns:
+            Lab = df_cl_nominal[meas].values
+            dE = colour.delta_E(Lab, Lab_n)
+            dEs.append(dE)
+
+        mcdm = ufloat(np.round(np.mean(dEs),rounding), np.round(np.std(dEs, ddof=1),rounding))
+
+        return mcdm
+
+    
     def compute_mean(self, return_data:Optional[bool] = True, criterion:Optional[str] = 'group', save:Optional[bool] = False, folder:Optional[str] = '.', filename:Optional[str] = 'default'):
         """Compute mean and standard deviation values of several microfading measurements.
 
@@ -1473,33 +1427,45 @@ class RS(object):
             return df_info, df_cl_final, df_sp_final   
     
 
+    def compute_sp_derivate(self):
+        """Compute the first derivative values of reflectance spectra.
 
-    def plot_CIELAB(self, stds=[], colors:Union[str,list] = None, title:Optional[str] = None, fontsize:Optional[int] = 20, legend_labels:Union[str,list] = 'default', legend_position:Optional[str] = 'in', legend_fontsize:Optional[int] = 20, legend_title:Optional[str] = None, obs_ill:Optional[bool] = True, save:Optional[bool] = False, path_fig:Optional[str] = 'cwd'):
+        Returns
+        -------
+        a list of pandas dataframes
+            It returns the first derivative values of the reflectance spectra inside dataframes where each column corresponds to a single spectra.
+        """
+
+        sp = self.get_spectra(derivation=True)
+        return sp
+    
+    
+    def plot_CIELAB(self, std:Optional[bool] = True, colors:Union[str,list] = None, title:Optional[str] = None, fontsize:Optional[int] = 20, legend_labels:Union[str,list] = 'default', legend_position:Optional[str] = 'in', legend_fontsize:Optional[int] = 20, legend_title:Optional[str] = None, obs_ill:Optional[bool] = True, save:Optional[bool] = False, path_fig:Optional[str] = 'cwd'):
         """Plot the Lab values related to the microfading analyses.
 
         Parameters
         ----------
-        stds : list, optional
+        std : bool, optional
             A list of standard variation values respective to each element given in the data parameter, by default []
           
-        title : Optional[str], optional
+        title : str, optional
             Whether to add a title to the plot, by default None
 
-        fontsize : Optional[int], optional
+        fontsize : int, optional
             Fontsize of the plot (title, ticks, and labels), by default 24
 
         legend_labels : Union[str, list], optional
             A list of labels respective to each element given in the data parameter that will be shown in the legend. When the list is empty there is no legend displayed, by default 'default'
             When 'default', each label will composed of the Id number of the number followed by a short description
 
-        legend_position : Optional[str], optional
+        legend_position : str, optional
             Position of the legend, by default 'in'
             The legend can either be inside the figure ('in') or outside ('out')
 
-        legend_fontsize : Optional[int], optional
+        legend_fontsize : int, optional
             Fontsize of the legend, by default 24
 
-        legend_title : Optional[str], optional
+        legend_title : str, optional
             Add a title above the legend, by default ''
 
         save : bool, optional
@@ -1515,10 +1481,30 @@ class RS(object):
             It returns a figure with 4 subplots that can be saved as a png file.
         """
 
-        data_Lab = self.get_cielab(coordinates=['L*', 'a*', 'b*'])
-        data_Lab = [x.T.values for x in data_Lab]
-       
+        # Retrieve the data and std
 
+        data_Lab = self.get_cielab(coordinates=['L*', 'a*', 'b*'])
+
+        data_mean = []
+        data_std = []
+
+        for col in data_Lab.columns:
+            data = data_Lab[col]
+            
+            if data.name[1] == 'mean':
+                data_mean.append(data.values)
+                
+            if data.name[1] == 'std':
+                if std:
+                    data_std.append(data.values)
+                else:
+                    data_std.append(np.zeros(len(data.values)))
+                
+            if data.name[1] == 'value':
+                data_mean.append(data.values)
+                data_std.append(np.zeros(len(data.values))) 
+
+        
         # Retrieve the metadata
         info = self.get_metadata()
         ids = [x for x in self.get_meas_ids if 'BW' not in x] 
@@ -1528,28 +1514,36 @@ class RS(object):
 
         else:
             group_descriptions = [''] * len(self.files)
-               
+         
         
-
         # Define the colour of the curves
         if colors == 'sample':
             pass           
 
         elif isinstance(colors, str):
             colors = [colors] * len(self.files)
-
-        elif colors == None:
-            colors = [None] * len(self.files)
+        
         
         # Define the labels
         if legend_labels == 'default':
-            legend_labels = [f'{x}-{y}' for x,y in zip(self.get_meas_ids,group_descriptions)]
-            legend_title = 'Measurement $n^o$'
+            legend_labels = []
 
+            for col in data_Lab.columns:
+                data = data_Lab[col]
+                
+                if data.name[1] == 'mean':
+                    legend_labels.append(data.name[0])
+
+                if data.name[1] == 'value':
+                    legend_labels.append(data.name[0])
+            
+            legend_title = 'Measurement $n^o$'
+            
+        
         # Whether to plot the observer and illuminant info
         if obs_ill:
             DB = databases.DB()
-            if isinstance(DB.get_colorimetry_info(), str):
+            if len(DB.get_colorimetry_info()) == 0:
                 observer = '10deg'
                 illuminant = 'D65'
             else:
@@ -1562,332 +1556,16 @@ class RS(object):
         else:
             obs_ill = None
 
-        return plotting.CIELAB(data=data_Lab, legend_labels=legend_labels, colors=colors, title=title, fontsize=fontsize, legend_fontsize=legend_fontsize, legend_position=legend_position, legend_title=legend_title, obs_ill=obs_ill, save=save, path_fig=path_fig)
+        return plotting.CIELAB(data=data_mean, stds=data_std, legend_labels=legend_labels, colors=colors, title=title, fontsize=fontsize, legend_fontsize=legend_fontsize, legend_position=legend_position, legend_title=legend_title, obs_ill=obs_ill, save=save, path_fig=path_fig)
+   
 
-
-    def plot_swatches_circle(self, light_doses: Optional[list] = [0,0.5,1,2,5,15], JND:Optional[list] = [1,2,3,5,10], dose_unit:Union[str,tuple] = 'Hv', dE:Optional[bool] = True, fontsize: Optional[int] = 24, equation:Optional[str] = 'c0*(x**c1) + c2', initial_params:Optional[List[float]] = [0.1, 0.1], save:Optional[bool] = False, path_fig:Optional[str] = 'cwd', title:Optional[str] = None, report:Optional[bool] = False): 
-        """Plot the microfading data with circular colored patches. 
-
-        Parameters
-        ----------
-        light_doses : list, optional
-            Light doses in Mlxh for which a coloured patches will be created, by default [0,0.5,1,2,5,1]
-            There has been at least two numerical values in the list. The first value corresponds to the color background of the plot and is usually set to 0. The other values will be plotted as circular patches.
-
-        JND : list, optional
-            Whether to plot circular patches of just noticeable differences, by default [1,2,3,5,10]
-            NOT YET IMPLEMENTED
-
-        dose_unit : [str, tuple], optional
-            Unit of the light energy dose, by default 'Hv'
-            Any of the following units can be used: 'He', 'Hv', 't'. Where 'He' corresponds to radiant energy (MJ/m2), 'Hv' to exposure dose (Mlxh), and 't' to times (hours) (exh,50,10,365)
-        
-        dE : bool, optional
-            Whether to include the dE00 value between the background and each circular patche, by default True
-
-        fontsize : int, optional
-            Fontsize of the plot (title, ticks, and labels), by default 24        
-
-        equation : str, optional
-            Mathematical equation used to fit the coordinate values, by default 'c0*(x**c1) + c2'.
-            Any others mathematical can be given. The following equation can also be used for fitting microfading data: '((x) / (c0 + (c1*x)))'.
-
-        initial_params : List[float], optional
-            Initial guesses of the 'c' parameters given in the equation (c0, c1, c2, etc.), by default [0.1, 0.0]
-            In the default values, only c0 and c1 are provided ; c2 is retrieved from the initial value of each colorimetric coordinate plot.
-
-        save : bool, optional
-            Whether to save the figure, by default False
-
-        path_fig : str, optional
-            Absolute path required to save the figure, by default 'cwd'
-            When 'cwd', it will save the figure in the current working directory.
-
-        title : str, optional
-            Whether to add a title to the plot, by default None, by default None        
-
-        report : bool, optional
-            _description_, by default False
-
-        Returns
-        -------
-        _type_
-            _description_
-        """
-       
-
-        if title == 'default':
-            title = list(self.get_meas_ids)
-
-        x_range=(0, light_doses[-1]+0.05, 0.05)   
-        x_values = np.arange(*x_range)     
-        Lab = self.get_cielab(coordinates=['L*','a*','b*'], dose_unit='Hv')          
-        data_Lab = [] 
-
-        # Define the function to fit
-        def fit_function(x, *params):
-            param_dict = {f'c{i}': param for i, param in enumerate(params)}
-            param_dict['x'] = x
-            return eval(equation, globals(), param_dict) 
-
-        
-        
-        for el in Lab:
-
-            x = el.index.values
-            df_Lab_extrapolated = pd.DataFrame(index=x_values) 
-
-            for c in ['L*','a*','b*']:                    
-                
-                y = el[c].values.flatten()
-                initial_value = y[0]
-                initial_params=initial_params + [initial_value]
-
-                def fit_function(x, *params):
-                    param_dict = {f'c{i}': param for i, param in enumerate(params)}
-                    param_dict['x'] = x
-                    return eval(equation, globals(), param_dict) 
-
-                #bounds = ([-np.inf] * len(initial_params), [np.inf, 1]) if len(initial_params) == 2 else ([-np.inf] * len(initial_params), [np.inf, 1, np.inf])
-
-                # perform the curve fitting
-                optimized_params, _ = curve_fit(fit_function, x, y, p0=initial_params) # bounds=bounds)
-                
-                # generate fitted y data
-                fitted_y = fit_function(x_values, *optimized_params)
-                #return fitted_y
-
-                # Calculate R-squared value
-                residuals = y - fit_function(x, *optimized_params)
-                ss_res, ss_tot = np.sum(residuals**2), np.sum((y - np.mean(y))**2)        
-                r_squared = np.round(1 - (ss_res / ss_tot), 3)
-
-                #print(f'1st, {c}, R_sq = {r_squared}')
-
-                if r_squared < 0.1:
-
-                    initial_params=[0,0.1, initial_value]
-
-                    def fit_function(x, *params):
-                        param_dict = {f'c{i}': param for i, param in enumerate(params)}
-                        param_dict['x'] = x
-                        return eval(equation, globals(), param_dict) 
-                    
-                    # perform the curve fitting
-                    optimized_params, _ = curve_fit(fit_function, x, y, p0=initial_params) # bounds=bounds)
-                    
-                    # generate fitted y data
-                    fitted_y = fit_function(x_values, *optimized_params)
-
-                    # Calculate R-squared value
-                    residuals = y - fit_function(x, *optimized_params)
-                    ss_res, ss_tot = np.sum(residuals**2), np.sum((y - np.mean(y))**2)        
-                    r_squared = np.round(1 - (ss_res / ss_tot), 3)
-
-                    #print(f'2nd, {c}, R_sq = {r_squared}')
-
-                    if r_squared < 0.1:
-                        initial_params=[-0.1,0.1, initial_value]
-
-                        def fit_function(x, *params):
-                            param_dict = {f'c{i}': param for i, param in enumerate(params)}
-                            param_dict['x'] = x
-                            return eval(equation, globals(), param_dict) 
-                        
-                        # perform the curve fitting
-                        optimized_params, _ = curve_fit(fit_function, x, y, p0=initial_params) # bounds=bounds)
-                        
-                        # generate fitted y data
-                        fitted_y = fit_function(x_values, *optimized_params)
-
-                        # Calculate R-squared value
-                        residuals = y - fit_function(x, *optimized_params)
-                        ss_res, ss_tot = np.sum(residuals**2), np.sum((y - np.mean(y))**2)        
-                        r_squared = np.round(1 - (ss_res / ss_tot), 3)
-                    
-
-                #extrapolated_values = self.compute_fitting(return_data=True, x_range=x_range, dose_unit='Hv', coordinate=c, initial_params=[0.1,0.1,initial_value], equation=equation)
-
-                df_Lab_extrapolated[c] = fitted_y
-
-
-
-            #return df_Lab_extrapolated  
-            df_Lab_extrapolated.index = np.round(df_Lab_extrapolated.index,2)
-            wanted_Lab = df_Lab_extrapolated.loc[light_doses].values
-            #wanted_srgb = colour.XYZ_to_sRGB(colour.Lab_to_XYZ(wanted_Lab), d65).clip(0, 1)
-            #data_srgb.append(wanted_srgb)
-            data_Lab.append(wanted_Lab)
-            #print(wanted_Lab)
-        
-        
-            plotting.swatches_circle(data=[wanted_Lab], data_type='Lab', light_doses=light_doses, dE=dE, fontsize=fontsize, save=save, title=title, path_fig=path_fig)
-
-
-    def plot_delta(self, stds:Optional[bool] = True, coordinates:Optional[list] = ['dE00'], dose_unit:Optional[str] = 'He', legend_labels:Union[str, list] = 'default', initial_values:Optional[bool] = False, colors:Union[str,list] = None, lw:Union[int,list] = 'default', title:Optional[str] = None, fontsize:Optional[int] = 24, legend_fontsize:Optional[int] = 24, legend_title:Optional[str] = None, xlim:Optional[tuple] = None, save:Optional[bool] = False, path_fig:Optional[str] = 'cwd'):
-        """Plot the delta values of choosen colorimetric coordinates related to the microfading analyses.
-
-        Parameters
-        ----------
-        stds : bool, optional
-            Whether to show the standard deviation values if any, by default True.
-
-        coordinates : list, optional
-            List of colorimetric coordinates, by default ['dE00']
-            Any of the following coordinates can be added to the list: 'dE76', 'dE00', 'dR_vis' , 'L*', 'a*', 'b*', 'C*', 'h'.
-
-        dose_unit : str, optional
-            Unit of the light energy dose, by default 'He'
-            Any of the following units can be used: 'He', 'Hv', 't'. Where 'He' corresponds to radiant energy (MJ/m2), 'Hv' to exposure dose (Mlxh), and 't' to times (sec)
-
-        legend_labels : Union[str, list], optional
-            A list of labels respective to each element given in the data parameter that will be shown in the legend. When the list is empty there is no legend displayed, by default 'default'
-            When 'default', each label will composed of the Id number of the number followed by a short description
-
-        colors : Union[str, list], optional
-            Define the colors of the curves, by default None
-            When 'sample', the color of each line will be based on srgb values computed from the reflectance values. Alternatively, a single string value can be used to define the color (see matplotlib colour values) and will be applied to all the lines. Or a list of matplotlib colour values can be used. With a single coordinate, the list should have the same length as measurement files. With multiple coordinates, the list should have the same length as coordinates.
-
-        lw : Union[int,list], optional
-            Width of the lines, by default 'default'
-            When 'default', it attributes a given a width according to each coordinates, otherwise it gives a value of 2.
-            A single value (an integer) can be entered and applied to all the lines.
-            A list of integers can also be entered. With a single coordinate, the list should have the same length as measurement files. With multiple coordinates, the list should have the same length as coordinates.
-
-        title : str, optional
-            Whether to add a title to the plot, by default None
-
-        fontsize : int, optional
-            Fontsize of the plot (title, ticks, and labels), by default 24
-
-        legend_fontsize : int, optional
-            Fontsize of the legend, by default 24
-
-        legend_title : str, optional
-            Add a title above the legend, by default ''
-
-        xlim : tuple, optional
-            A tuple of two integers that define the left and right limits of the x-axis , by default None.
-
-        save : bool, optional
-            Whether to save the figure, by default False
-
-        path_fig : str, optional
-            Absolute path required to save the figure, by default 'cwd'
-            When 'cwd', it will save the figure in the current working directory.
-        """
-
-        # Retrieve the data
-        if xlim == None:
-            dose_values = 'all'
-        elif isinstance(xlim, tuple):
-            dose_values = (xlim[0], xlim[1], 0.05)
-                
-        all_data = self.compute_delta(coordinates=coordinates, dose_unit=dose_unit, dose_values=dose_values)
-        nominal_data = []
-        stdev_data = []
-
-        for data in all_data:
-
-            if sorted(set(data.columns.get_level_values(1))) == ['mean', 'std']:
-                nominal = data.xs(key='mean', axis=1, level=1)
-                if stds:
-                    stdev = data.xs(key='std', axis=1, level=1)   
-                else:
-                    stdev = nominal.copy()   
-                    stdev.iloc[:,:] = 0         
-
-            else:
-                                
-                nominal = data
-                stdev = data.copy()
-                stdev.iloc[:,:] = 0
-                
-
-            nominal_data.append(nominal.reset_index().T.values)
-            stdev_data.append(stdev.T.values)
-
-        
-        
-        # Retrieve the metadata
-        info = self.get_metadata()
-        ids = [x for x in self.get_meas_ids]
-        meas_nbs = [x.split('.')[-1] for x in ids]
-
-        if 'group_description' in info.index:                
-            group_descriptions = info.loc['group_description'].values
-
-        else:
-            group_descriptions = [''] * len(self.files)
-               
-
-        # Set the labels values
-        if legend_labels == 'default':                       
-            legend_labels = [f'{x}-{y}' for x,y in zip(ids, group_descriptions)] 
-
-        elif legend_labels == '':
-            legend_labels = []
-        
-        elif isinstance(legend_labels, list):
-            legend_labels = legend_labels
-            '''
-            labels_list = []
-            for i,Id in enumerate(self.get_meas_ids):
-                label = Id.split('.')[-1]
-                for el in labels:
-                    label = label + f'-{self.get_metadata().loc[el].values[i]}'
-                labels_list.append(label)
-
-            labels = labels_list
-            '''
-
-        # Add the initial values of the colorimetric coordinates
-        
-        if initial_values:  
-            initial_values = {}          
-            for coord in coordinates:
-                if coord in ['dL*', 'da*', 'db*', 'dC*', 'dh']:
-                    initial_value = self.get_cielab(coordinates=[coord[1:]])[0][coord[1:]].iloc[0,:].values[0]
-                    initial_values[coord[1:]] = initial_value
-        else:
-            initial_values = {}  
-
-        if len(meas_nbs) > 1:
-            initial_values = {}
-
-        # Set the color of the lines according to the sample
-        if colors == 'sample':
-            colors = list(self.get_sRGB(dose_values=0).values.reshape(len(meas_nbs),-1))
-            colors = colors * len(coordinates)
-        
-        # Whether to add a title or not
-        if title == 'default':
-            title = 'MFT'            
-        elif title == 'none':
-            title = None
-        else:
-            title = title 
-
-        # Define the saving folder in case the figure should be saved
-        filename = ''
-        if save:
-            if path_fig == 'default':
-                path_fig = self.get_dir(folder_type='figures') / filename                
-
-            if path_fig == 'cwd':
-                path_fig = f'{os.getcwd()}/{filename}' 
-        
-        
-        plotting.delta(data=nominal_data, yerr=stdev_data, dose_unit=[dose_unit], coordinates=coordinates, initial_values=initial_values, colors=colors, lw=lw, title=title, fontsize=fontsize, legend_labels=legend_labels, legend_fontsize=legend_fontsize, legend_title=legend_title, save=save, path_fig=path_fig)
-
-
-    def plot_sp(self, stdev:Optional[bool] = False, spectra:Optional[str] = 'i', spectral_mode:Optional[str] = 'R', legend_labels:Union[str,list] = 'default', title:Optional[str] = None, fontsize:Optional[int] = 24, fontsize_legend:Optional[int] = 24, legend_title='', wl_range:Optional[tuple] = None, colors:Union[str,list] = None, lw:Union[int, list] = 2, ls:Union[str, list] = '-', save=False, path_fig='cwd', derivation=False, smoothing=(1,0), report:Optional[bool] = False):
+    def plot_sp(self, std:Optional[bool] = True, spectra:Optional[str] = 'i', spectral_mode:Optional[str] = 'R', legend_labels:Union[str,list] = 'default', title:Optional[str] = None, fontsize:Optional[int] = 24, fontsize_legend:Optional[int] = 24, legend_title:Optional[str] = 'default', wl_range:Optional[tuple] = None, colors:Union[str,list] = None, lw:Union[int, list] = 2, ls:Union[str, list] = '-', text:Optional[str] = None, save=False, path_fig='cwd', derivation=False, smoothing=(1,0), report:Optional[bool] = False):
         """Plot the reflectance spectra corresponding to the associated microfading analyses.
 
         Parameters
         ----------
-        stdev : bool, optional
-            Whether to show the standard deviation values, by default False
+        std : bool, optional
+            Whether to show the standard deviation values, by default True
 
         spectra : Optional[str], optional
             Define which spectra to display, by default 'i'
@@ -1958,6 +1636,69 @@ class RS(object):
             It returns a figure that can be save as a png file.
         """
 
+        # retrieve the data
+        data_sp = self.get_spectra(wl_range=wl_range, spectral_mode=spectral_mode, smoothing=smoothing, derivation=derivation)
+
+        wavelengths = data_sp.index
+        data_n = []   # wavelengths + nominal data        
+        data_s = []   # standard deviation data
+
+        for col in data_sp.columns:
+            data = data_sp[col]
+            
+            if data.name[1] == 'mean':
+                data_n.append(np.array([wavelengths,data.values]))
+                
+            if data.name[1] == 'std':
+                if std:
+                    data_s.append(data.values)
+                else:
+                    data_s.append(np.zeros(len(data.values)))
+                
+            if data.name[1] == 'value':
+                data_n.append(np.array([wavelengths,data.values]))
+                data_s.append(np.zeros(len(data.values)))         
+        
+
+        # define the labels of the legend
+        if legend_labels == 'default':
+            legend_labels = []
+
+            for col in data_sp.columns:
+                data = data_sp[col]
+                
+                if data.name[1] == 'mean':
+                    legend_labels.append(data.name[0])
+
+                if data.name[1] == 'value':
+                    legend_labels.append(data.name[0])
+
+        elif legend_labels == None or legend_labels == 'off':
+            legend_labels = ''
+            
+        
+        # define the title of the legend
+        if legend_title == 'default':
+            legend_title = 'Measurement $n^o$'
+
+        
+        # define the colors of the curves
+        if colors == 'sample':
+            colors = self.get_sRGB().T.values
+
+        elif isinstance(colors, str):
+            colors = [colors] * len(data_n)
+
+        elif colors == None:
+            colors = [None] * len(data_n)
+
+
+
+        return plotting.spectra(data=data_n, stds=data_s, spectral_mode=spectral_mode, legend_labels=legend_labels, title=title, fontsize=fontsize, fontsize_legend=fontsize_legend, legend_title=legend_title, x_range=wl_range, colors=colors, lw=lw, ls=ls, text=text, save=save, path_fig=path_fig, derivation=derivation)
+        
+
+
+
         # Retrieve the metadata
         info = self.get_metadata()
 
@@ -1983,6 +1724,7 @@ class RS(object):
             legend_labels = [f'{x}-{y}' for x,y in zip(self.get_meas_ids,group_descriptions)]
             legend_title = 'Measurement $n^o$'
 
+        '''
         # Select the spectral data
         if spectra == 'i':            
             data_sp_all = self.get_spectra(wl_range=wl_range, smoothing=smoothing)
@@ -2019,7 +1761,8 @@ class RS(object):
         else:
             print(f'"{spectra}" is not an adequate value. Enter a value for the parameter "spectra" among the following list: "i", "f", "i+f", "doses".')
             return           
-                                
+        '''                        
+        
         # whether to compute the absorption spectra
         if spectral_mode == 'abs':
             data_sp = [np.log(x) * (-1) for x in data_sp]
@@ -2065,35 +1808,44 @@ class RS(object):
         return plotting.spectra(data=wanted_data, stds=wanted_std, spectral_mode=spectral_mode, legend_labels=legend_labels, title=title, fontsize=fontsize, fontsize_legend=fontsize_legend, legend_title=legend_title, x_range=wl_range, colors=colors, lw=lw, ls=ls, text=text, save=save, path_fig=path_fig, derivation=derivation)
        
 
-    def plot_sp_delta(self,spectra:Optional[tuple] = ('i','f'), dose_unit:Optional[str] = 'Hv', legend_labels:Union[str,list] = 'default', title:Optional[str] = None, fontsize:Optional[int] = 24, legend_fontsize:Optional[int] = 24, legend_title='', wl_range:Union[int,float,list,tuple] = None, colors:Union[str,list] = None, spectral_mode:Optional[str] = 'dR', derivation=False, smoothing=(1,0)):
+    def plot_sp_delta(self,spectra:Optional[tuple] = ('i','f'), legend_labels:Union[str,list] = 'default', title:Optional[str] = None, fontsize:Optional[int] = 24, legend_fontsize:Optional[int] = 24, legend_title='', wl_range:Union[int,float,list,tuple] = None, colors:Union[str,list] = None, ls:Union[str,list] = None, lw:Union[str,list] = None, spectral_mode:Optional[str] = 'dR', derivation=False, smoothing=(1,0)):
 
-        if spectra == ('i','f'):
+        df_sp = self.get_spectra(wl_range=wl_range, spectral_mode=spectral_mode,smoothing=smoothing)
+        cols_to_keep = df_sp.columns[df_sp.columns.get_level_values(1).isin(['value', 'mean'])] 
+        df_sp_nominal = df_sp[cols_to_keep]
 
-            sp_data = [x.iloc[:,[0,-1]] for x in self.get_spectra(wl_range=wl_range, spectral_mode=spectral_mode)]
-            sp_delta = [x.iloc[:,1] - x.iloc[:,0] for x in sp_data]
-            wanted_data = [(x.index, x.values) for x in sp_delta]
+        len_sp = df_sp_nominal.shape[1]
 
-        elif spectra[0] == 'i':
-            
-            sp1 = [x.iloc[:,0] for x in self.get_spectra(wl_range=wl_range, spectral_mode=spectral_mode)]
-            sp2 = [x.values.flatten() for x in self.get_spectra(dose_unit=dose_unit, dose_values=float(spectra[1]),wl_range=wl_range, spectral_mode=spectral_mode)]
-            
-            wanted_data = [(x.index,np.array(y)-np.array(x)) for x,y in zip(sp1,sp2)]
+        def get_spectrum(x):
+            if len(x.columns) == 1:
+                sp = unumpy.uarray(x.values.flatten(), np.zeros(len(x)))
+                            
+            else:
+                sp = unumpy.uarray(x.iloc[:,0].values.flatten(), x.iloc[:,1].values.flatten())
 
-        elif spectra[1] == 'f':
+            return sp
 
-            sp1 = [x.values.flatten() for x in self.get_spectra(dose_unit=dose_unit, dose_values=float(spectra[0]), wl_range=wl_range, spectral_mode=spectral_mode)]            
-            sp2 = [x.iloc[:,-1] for x in self.get_spectra(wl_range=wl_range, spectral_mode=spectral_mode)]            
-            
-            wanted_data = [(y.index,np.array(y)-np.array(x)) for x,y in zip(sp1,sp2)]
+
+        if len_sp == 1:
+            print('Not enough spectra. There has to be at least two reflectance spectra.')
+            return
         
-        else:
+        elif len_sp == 2:
+            cols = df_sp.columns.get_level_values(0)
+            sp1 = get_spectrum(df_sp[cols[0]])
+            sp2 = get_spectrum(df_sp[cols[1]])
 
-            wavelengths = self.get_wavelength.T.values
-            sp1 = [x.values.flatten() for x in self.get_spectra(dose_unit=dose_unit, dose_values=float(spectra[0]),wl_range=wl_range, spectral_mode=spectral_mode)]
-            sp2 = [x.values.flatten() for x in self.get_spectra(dose_unit=dose_unit, dose_values=float(spectra[1]),wl_range=wl_range, spectral_mode=spectral_mode)]
-            
-            wanted_data = [(w,np.array(y)-np.array(x)) for w,x,y in zip(wavelengths,sp1,sp2)]   
+            wanted_data = [(df_sp.index,unumpy.nominal_values(sp2-sp1))]  
+            wanted_std = [unumpy.std_devs(x) for x in wanted_data]
+
+        else:
+            cols = df_sp.columns.get_level_values(0)
+            sp_ref = get_spectrum(df_sp[cols[0]])
+
+            sp_deltas = df_sp_nominal.T.values - sp_ref
+            wanted_data = [(df_sp_nominal.index,unumpy.nominal_values(x)) for x in sp_deltas]
+            wanted_std = [unumpy.std_devs(x) for x in sp_deltas]         
+                  
                  
         # Retrieve the metadata
         info = self.get_metadata()
@@ -2125,11 +1877,16 @@ class RS(object):
             pass  # to implement
             #wanted_data = [x.reset_index() for x in wanted_data]
             #wanted_data = [pd.concat([x.iloc[:,0], pd.DataFrame(np.gradient(x.iloc[:,1:], axis=0))], axis=1) for x in wanted_data]
-            #wanted_data = [x.set_index(x.columns.get_level_values(0)[0]) for x in wanted_data] 
+            #wanted_data = [x.set_index(x.columns.get_level_values(0)[0]) for x in wanted_data]
+         
+        # Define the line styles
+        ls = ['-'] * len(wanted_data) * 2
 
+        # Define the line thickness
+        lw = [2] * len(wanted_data) * 2
         
-        #return wanted_data
-        plotting.spectra(data=wanted_data, spectral_mode=spectral_mode, x_range=wl_range, colors=colors, fontsize_legend=legend_fontsize, legend_labels=legend_labels, legend_title=legend_title, title=title, fontsize=fontsize, derivation=derivation)
+        
+        plotting.spectra(data=wanted_data, stds=wanted_std, spectral_mode=spectral_mode, x_range=wl_range, colors=colors, lw=lw, ls=ls, fontsize_legend=legend_fontsize, legend_labels=legend_labels, legend_title=legend_title, title=title, fontsize=fontsize, derivation=derivation)
 
 
     def get_illuminant(self, illuminant:Optional[str] = 'D65', observer:Optional[str] = '10'):
@@ -2183,23 +1940,7 @@ class RS(object):
 
         return colour.colorimetry.MSDS_CMFS_STANDARD_OBSERVER[observers[observer]]
     
-
-    def compute_sp_derivate(self):
-        """Compute the first derivative values of reflectance spectra.
-
-        Returns
-        -------
-        a list of pandas dataframes
-            It returns the first derivative values of the reflectance spectra inside dataframes where each column corresponds to a single spectra.
-        """
-
-        sp = self.get_data(data='sp')                    
-
-        sp_derivation = [pd.DataFrame(pd.concat([pd.DataFrame(np.gradient(x.iloc[:,:], axis=0), index=pd.Series(x.index), columns=x.columns)], axis=1),index=pd.Series(x.index), columns=x.columns) for x in sp]
-
-        return sp_derivation
     
-
     def get_sRGB(self, illuminant='default', observer='default', clip:Optional[bool] = True):
         """Compute the sRGB values. 
 
@@ -2214,7 +1955,7 @@ class RS(object):
             When 'default', it fetches the observer value recorded in the db_config.json file of the package. If no value has been recorded, then it sets the observer value to '10'.        
 
         clip : Optional[bool], optional
-            Whether to constraint the srgb values between 0 and 1.
+            Whether to constraint the srgb values between 0 and 1. by default True.
 
         Returns
         -------
@@ -2222,10 +1963,11 @@ class RS(object):
             It returns the sRGB values inside a dataframe where each column corresponds to a single file.
         """
 
+
         DB = databases.DB()
 
         if observer == 'default':
-            if isinstance(DB.get_colorimetry_info(), str):
+            if len(DB.get_colorimetry_info()) == 0:
                 observer = '10deg'
             else:
                 observer = DB.get_colorimetry_info().loc['observer']['value']
@@ -2235,7 +1977,7 @@ class RS(object):
 
 
         if illuminant == 'default':
-            if isinstance(DB.get_colorimetry_info(), str):
+            if len(DB.get_colorimetry_info()) == 0:
                 illuminant = 'D65'
             else:
                 illuminant = DB.get_colorimetry_info().loc['illuminant']['value']
@@ -2252,52 +1994,47 @@ class RS(object):
         
         ccs_ill = colour.CCS_ILLUMINANTS[observers[observer]][illuminant]
 
-        meas_ids = self.get_meas_ids 
+        meas_ids = self.get_meas_ids               
+        df_sp = self.get_spectra() 
 
-        df_sp = self.get_spectra()   
-        df_sp_nominal = [
-            df.loc[:, pd.IndexSlice[:, 'mean']] if 'mean' in df.columns.get_level_values(1)
-            else df.loc[:, pd.IndexSlice[:, 'value']]
-            for df in df_sp
-        ] 
+        cols_to_keep = df_sp.columns[df_sp.columns.get_level_values(1).isin(['value', 'mean'])] 
+        df_sp_nominal = df_sp[cols_to_keep]
 
-        df_srgb = []
         
+        df_srgb = pd.DataFrame(index=['R','G','B']) 
+        wl = df_sp_nominal.index
 
-        for df, meas_id in zip(df_sp_nominal, meas_ids):
-            
-            srgb_values = pd.DataFrame(index=['R','G','B']).T            
+        for sp in df_sp_nominal.T.values:
 
-            for col in df.columns:
-                
-                sp = df[col]
-                wl = df.index
-                sd = colour.SpectralDistribution(sp,wl)                
-
-                XYZ = colour.sd_to_XYZ(sd,cmfs_observers[observer], illuminant=colour.SDS_ILLUMINANTS[illuminant]) 
-                srgb = np.round(colour.XYZ_to_sRGB(XYZ / 100, illuminant=ccs_ill), 4)                        
-                srgb_values = pd.concat([srgb_values, pd.DataFrame(srgb, index=['R','G','B']).T], axis=0)
-                srgb_values.index = np.arange(0,srgb_values.shape[0])
-
-            srgb_values.columns = pd.MultiIndex.from_product([[meas_id], srgb_values.columns])
-            
+            sd = colour.SpectralDistribution(sp,wl)
+            XYZ = colour.sd_to_XYZ(sd,cmfs_observers[observer], illuminant=colour.SDS_ILLUMINANTS[illuminant])        
+            srgb = np.round(colour.XYZ_to_sRGB(XYZ / 100, illuminant=ccs_ill), 4)   
             if clip:
-                srgb_values = srgb_values.clip(0,1)
+                srgb = srgb.clip(0,1)
+            df_srgb = pd.concat([df_srgb, pd.DataFrame(srgb, index=['R','G','B'])], axis=1)
 
-            df_srgb.append(srgb_values)
-
-
-        return pd.concat(df_srgb, axis=1)
+        df_srgb.columns = df_sp_nominal.columns
+        df_srgb.index.names = ['coordinates']
+        
+        return df_srgb
 
 
     @property
     def get_wavelength(self):
         """Return the wavelength range of the microfading measurements.
         """
-        data = self.get_spectra()
+        df_sp = self.get_spectra()
 
-        wavelengths = pd.concat([pd.Series(x.index.values) for x in data], axis=1)
-        wavelengths.columns = self.get_meas_ids
+        cols_to_keep = df_sp.columns[df_sp.columns.get_level_values(1).isin(['value', 'mean'])] 
+        df_sp_nominal = df_sp[cols_to_keep]
+
+        wls = {}
+        for col in df_sp_nominal.columns:
+            sp_data = df_sp_nominal[col].dropna(axis=0)            
+            wls[col] = sp_data.index
+
+        wavelengths = pd.DataFrame.from_dict(wls,orient='index').T
+        
 
         return wavelengths
 
@@ -2324,7 +2061,7 @@ class RS(object):
         DB = databases.DB()
 
         if observer == 'default':
-            if isinstance(DB.get_colorimetry_info(), str):
+            if len(DB.get_colorimetry_info()) == 0:
                 observer = '10deg'
             else:
                 observer = DB.get_colorimetry_info().loc['observer']['value']
@@ -2334,46 +2071,38 @@ class RS(object):
 
 
         if illuminant == 'default':
-            if isinstance(DB.get_colorimetry_info(), str):
+            if len(DB.get_colorimetry_info()) == 0:
                 illuminant = 'D65'
             else:
-                illuminant = DB.get_colorimetry_info().loc['illuminant']['value']               
+                illuminant = DB.get_colorimetry_info().loc['illuminant']['value']
+        
         
         cmfs_observers = {
             '10deg': colour.colorimetry.MSDS_CMFS_STANDARD_OBSERVER["CIE 1964 10 Degree Standard Observer"],
             '2deg': colour.colorimetry.MSDS_CMFS_STANDARD_OBSERVER["CIE 1931 2 Degree Standard Observer"] 
-            } 
+            }
         
-        meas_ids = self.get_meas_ids                
-        df_sp = self.get_spectra()   
-        df_sp_nominal = [
-            df.loc[:, pd.IndexSlice[:, 'mean']] if 'mean' in df.columns.get_level_values(1)
-            else df.loc[:, pd.IndexSlice[:, 'value']]
-            for df in df_sp
-        ] 
+                     
+        df_sp = self.get_spectra() 
+
+        cols_to_keep = df_sp.columns[df_sp.columns.get_level_values(1).isin(['value', 'mean'])] 
+        df_sp_nominal = df_sp[cols_to_keep]
+
+        
+        df_XYZ = pd.DataFrame(index=['X','Y','Z']) 
+        wl = df_sp_nominal.index
+
+        for sp in df_sp_nominal.T.values:
+
+            sd = colour.SpectralDistribution(sp,wl)
+            XYZ = np.round(colour.sd_to_XYZ(sd,cmfs_observers[observer], illuminant=colour.SDS_ILLUMINANTS[illuminant]),4)                    
+            df_XYZ = pd.concat([df_XYZ, pd.DataFrame(XYZ, index=['X','Y','Z'])], axis=1)
+
+        df_XYZ.columns = df_sp_nominal.columns
+        df_XYZ.index.names = ['coordinates']
+        
+        return df_XYZ
           
-        df_XYZ = []
-        
-
-        for df, meas_id in zip(df_sp_nominal, meas_ids):
-            
-            XYZ_values = pd.DataFrame(index=['X','Y','Z']).T
-
-            for col in df.columns:
-                
-                sp = df[col]
-                wl = df.index
-                sd = colour.SpectralDistribution(sp,wl)                
-
-                XYZ = np.round(colour.sd_to_XYZ(sd,cmfs_observers[observer], illuminant=colour.SDS_ILLUMINANTS[illuminant]),3)
-                XYZ_values = pd.concat([XYZ_values, pd.DataFrame(XYZ, index=['X','Y','Z']).T], axis=0)
-                XYZ_values.index = np.arange(0,XYZ_values.shape[0])
-
-            XYZ_values.columns = pd.MultiIndex.from_product([[meas_id], XYZ_values.columns])
-            df_XYZ.append(XYZ_values)
-
-        return pd.concat(df_XYZ, axis=1)
-
 
     def get_xy(self, illuminant:Optional[str] = 'default', observer:Union[str, int] = 'default'):
         """Compute the xy values. 
@@ -2393,10 +2122,12 @@ class RS(object):
         pandas dataframe
             It returns the xy values inside a dataframe where each column corresponds to a single file.
         """
+
+
         DB = databases.DB()
 
         if observer == 'default':
-            if isinstance(DB.get_colorimetry_info(), str):
+            if len(DB.get_colorimetry_info()) == 0:
                 observer = '10deg'
             else:
                 observer = DB.get_colorimetry_info().loc['observer']['value']
@@ -2406,45 +2137,42 @@ class RS(object):
 
 
         if illuminant == 'default':
-            if isinstance(DB.get_colorimetry_info(), str):
+            if len(DB.get_colorimetry_info()) == 0:
                 illuminant = 'D65'
             else:
-                illuminant = DB.get_colorimetry_info().loc['illuminant']['value']               
+                illuminant = DB.get_colorimetry_info().loc['illuminant']['value']
+     
         
         cmfs_observers = {
             '10deg': colour.colorimetry.MSDS_CMFS_STANDARD_OBSERVER["CIE 1964 10 Degree Standard Observer"],
             '2deg': colour.colorimetry.MSDS_CMFS_STANDARD_OBSERVER["CIE 1931 2 Degree Standard Observer"] 
-            }       
+            }
         
+                       
+        df_sp = self.get_spectra() 
+
+        cols_to_keep = df_sp.columns[df_sp.columns.get_level_values(1).isin(['value', 'mean'])] 
+        df_sp_nominal = df_sp[cols_to_keep]
+
         
-        meas_ids = self.get_meas_ids                
-        df_sp = self.get_spectra()   
-        df_sp_nominal = [
-            df.loc[:, pd.IndexSlice[:, 'mean']] if 'mean' in df.columns.get_level_values(1)
-            else df.loc[:, pd.IndexSlice[:, 'value']]
-            for df in df_sp
-        ]     
-        df_xy = []
+        df_xy = pd.DataFrame(index=['x','y']) 
+        wl = df_sp_nominal.index
+
+        for sp in df_sp_nominal.T.values:
+
+            sd = colour.SpectralDistribution(sp,wl)
+            XYZ = colour.sd_to_XYZ(sd,cmfs_observers[observer], illuminant=colour.SDS_ILLUMINANTS[illuminant]) 
+            xy = np.round(colour.XYZ_to_xy(XYZ),4)           
+            df_xy = pd.concat([df_xy, pd.DataFrame(xy, index=['x','y'])], axis=1)
+
+        df_xy.columns = df_sp_nominal.columns
+        df_xy.index.names = ['coordinates']
         
+        return df_xy
 
-        for df, meas_id in zip(df_sp_nominal, meas_ids):
-            
-            xy_values = pd.DataFrame(index=['x','y']).T           
 
-            for col in df.columns:
-                
-                sp = df[col]
-                wl = df.index
-                sd = colour.SpectralDistribution(sp,wl)                
 
-                XYZ = colour.sd_to_XYZ(sd,cmfs_observers[observer], illuminant=colour.SDS_ILLUMINANTS[illuminant])
-                xy = np.round(colour.XYZ_to_xy(XYZ),4)
-                xy_values = pd.concat([xy_values, pd.DataFrame(xy, index=['x','y']).T], axis=0)
-                xy_values.index = np.arange(0,xy_values.shape[0])
 
-            xy_values.columns = pd.MultiIndex.from_product([[meas_id], xy_values.columns])
-            df_xy.append(xy_values)
 
-        return pd.concat(df_xy, axis=1)
 
     
