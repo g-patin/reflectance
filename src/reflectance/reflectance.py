@@ -22,11 +22,13 @@ from scipy.interpolate import RegularGridInterpolator
 import ipywidgets as ipw
 from ipywidgets import *
 from IPython.display import display, clear_output
+import msdb
 
 # underlying modules of the  microfading package
 from . import plotting
-from . import databases
+from . import config
 from . import process_rawfiles
+from . import utils
 
 ####### DEFINE GENERAL PARAMETERS #######
 
@@ -57,25 +59,26 @@ def is_DB(info_msg:Optional[bool] = True):
     "Check whether the databases files were created."
 
     # instantiate a DB class object
-    DB = databases.DB()
-    DB_config = DB.get_db_config()
+    
+    DB_config = config.get_config_info()
+    folder_db = DB_config['databases']['path_folder']
 
     if len(DB_config['databases']) == 0:
         print('The databases have not been registered nor configured. If you wish to create the database files, use the function "create_DB". If the database files have been created but you just want to set the path of the databases folder, then use the function "set_DB".')
         
         return False
 
-    db_files = ['DB_projects.csv', 'DB_objects.csv','institutions.txt', 'persons.txt','object_types.txt', 'object_techniques.txt', 'object_supports.txt', 'object_creators.txt']
+    db_files = ['projects_info.csv', 'objects_info.csv','institutions.txt', 'users_info.txt','object_types.txt', 'object_techniques.txt', 'object_materials.txt', 'object_creators.txt']
         
-    if all(list(map(os.path.isfile, [str(Path(DB.folder_db)/x) for x in db_files]))):
+    if all(list(map(os.path.isfile, [str(Path(folder_db)/x) for x in db_files]))):
         if info_msg:
-            print(f'All the databases were created and can be found in the following directory: {DB.folder_db}')            
+            print(f'A database, called {DB_config["databases"]["db_name"]}, has been created for which the corresponding files can be found in the following directory: {folder_db}')            
         return True
 
     else:
         if info_msg:
             print('The databases files were created, but one or several files are currently missing.')
-            print(f'The files should be located in the following directory: {DB.folder_db}')
+            print(f'The files should be located in the following directory: {folder_db}')
 
         return False
 
@@ -174,177 +177,37 @@ def get_datasets(device:Optional[str] = 'KM', rawfiles:Optional[bool] = False, s
     return file_paths
    
 
-def create_DB(folder:str):
-    """Initiate the creation of databases.
+def get_config(key:Optional[str] = 'all'):
+    """Retrieve the content of the config_info.json file
 
     Parameters
     ----------
-    folder : str
-        Absolute path of the folder where the databases will be stored.
+    key : Optional[str], optional
+        Give you the possibility to retrieve a specific category of information, by default 'all'
+        One can enter a key value among the following list: ['databases', 'devices', 'comments', 'colorimetry', 'fibers', 'filters', 'lamps', 'objectives']
 
     Returns
     -------
-        It creates two empty databases as .csv file (DB_projects.csv and DB_objects.csv), as well as six .txt files in the folder given as input.
+    dict
+        It returns the information inside a dictionary.
     """
 
-    # instantiate a DB class object and then use the create_db function
-    DB = databases.DB()
-    DB.create_db(folder_path=folder)
-
-
-def get_objects(project_id:Union[str,list] = 'all'):
-    """Retrieve object Id numbers according to project Id.
-
-    Parameters
-    ----------
-    project_id : Union[str,list], optional
-        The Id number of projects for which the objects should be retrieved, by default 'all'
-        You can enter a string if there is only a single project, or a list of strings if there are several projects.
-        When 'all', it returns all the objects registered in the DB_objects.csv
-
-    Returns
-    -------
-    a dictionary
-        It returns a dictionary where the keys are the project Id number and the values are the object Id number given inside a list. If there is only one project id, then it directly returns the list of objects.
-    """
-    # instantiate a DB class object
-    DB = databases.DB() 
-
-    db_objects = DB.get_db(db='objects')
-    projects_objects = {}
-
-    if project_id == 'all':
-        pass
-    elif isinstance(project_id, str):
-        project_id = [project_id]
-        db_objects = db_objects[db_objects['project_id'].isin(project_id)]
-    elif isinstance(project_id, list):
-        db_objects = db_objects[db_objects['project_id'].isin(project_id)]
+    # Retrieve the path of the config_info file
+    config_file=Path(__file__).parent / 'config_info.json'
     
-    project_ids = sorted(set(db_objects['project_id'].values))
-    for Id in project_ids:
-        df_project = db_objects[db_objects['project_id'] == Id]
-        objects = sorted(set(df_project['object_id'].values))
-        projects_objects[Id] = objects   
+    # Load folder path from JSON file if it exists
+    if os.path.exists(config_file):
+        with open(config_file, 'r') as file:
+            config = json.load(file)
 
-    if len(project_id) == 1:
-        projects_objects = projects_objects[project_id[0]]
-
-    return projects_objects
-
-
-def get_path_DB():
-    """Retrieve the absolute path of the folder where the databases are located.
-
-    Returns
-    -------
-    string or None
-        If dabases have been created, it will return the absolute path as a string. Otherwise, it will only print a statement indicating no databases were found.    
-    """
-    
-    if is_DB(info_msg=False):
-
-        # instantiate a DB class object
-        DB = databases.DB()   
-
-        
-        if DB.folder_db.stem == "folder_path":
-            print('Databases have not been created or have been deleted. Please, create databases by running the function "create_DB" from the reflectance package.')
-            return None
-        
-        else:    
-            if 'DB_projects.csv' in os.listdir(DB.folder_db) and 'DB_objects.csv' in os.listdir(DB.folder_db):
-
-                print(f'DB_projects.csv and DB_objects.csv files can be found in the following folder: {DB.folder_db}')    
-                return DB.folder_db       
-
+            if key != 'all':
+                return config[key]
             else:
-                print('Databases have not been created or have been deleted. Please, create databases by running the function "create_DB" from the reflectance package.')
-                return None
-
-
-def get_creators():
-    """Retrieve the list of object creators that have been registered in the object_creators.txt file
-
-    Returns
-    -------
-    pandas dataframe
-        It returns the list of creators inside a pandas dataframe with two columns: 'surname', 'name'
-    """
-    
-    if is_DB(info_msg=False):
-        DB = databases.DB()
-        return DB.get_creators()
-
-
-def get_DB(db:Optional[str] = 'all'):
-    """Retrieve the databases
-
-    Parameters
-    ----------
-    db : Optional[str], optional
-        Choose which databases to retrieve, by default 'all'
-        When 'projects', it returns the DB_projects.csv file
-        When 'objects', it returns the DB_objects.csv file
-        When 'all', it returns both file as a tuple
-
-    Returns
-    -------
-    pandas dataframe or tuple
-        It returns the databases as a pandas dataframe or a tuple if both dataframes are being asked.
-    """
-
-    # instantiate a DB class object and return the databases if they exist.
-    DB = databases.DB()
-    return DB.get_db(db=db)
-
-
-def get_DB_config():
-
-    DB = databases.DB()
-    return DB.get_db_config()
-
-
-def get_institutions():
-    """Retrieve the list of institutions that have been registered in the institutions.txt file. These institutions are the owner of the objects on which the reflectance analyses were performed.
-
-    Returns
-    -------
-    pandas dataframe
-        It returns the list of institutions inside a pandas dataframe with two columns: 'name', 'acronym'
-    """
-
-    if is_DB(info_msg=False):
-        DB = databases.DB()
-        return DB.get_institutions()
-
-
-def get_persons():
-    """Retrieve the list of persons that have been registered in the persons.txt file. These persons are the one related to the creation of the measurement files.
-
-    Returns
-    -------
-    pandas dataframe
-        It returns the list of persons inside a pandas dataframe with three columns: 'name', 'surname', 'initials'
-    """
-
-    if is_DB(info_msg=False):
-        DB = databases.DB()
-        return DB.get_persons()
-
-
-def get_devices():
-    """Retrieve the list of microfading devices that have been registered in the devices.txt file.
-
-    Returns
-    -------
-    pandas dataframe
-        It returns the list of devices inside a pandas dataframe with four columns: 'Id', 'name', 'description', 'process_function'
-    """
-
-    if is_DB(info_msg=False):
-        DB = databases.DB()    
-        return DB.get_devices()
+                return config
+        
+    else:
+        print('The config_info.json has been deleted ! Please re-install the microfading package.')
+        return None   
 
 
 def get_colorimetry_info():
@@ -357,245 +220,16 @@ def get_colorimetry_info():
     """
 
     if is_DB(info_msg=False):
-        DB = databases.DB()    
-        return DB.get_colorimetry_info()
+        return config.get_colorimetry_info()
 
 
-def get_white_standards():
-    """Retrieve the list of white standard references that have been registered in the white_standards.txt file.
-
-    Returns
-    -------
-    pandas dataframe
-        It returns the list of references inside a pandas dataframe with two columns: 'Id', 'description'
-    """ 
-    
-    if is_DB(info_msg=False):
-        DB = databases.DB()
-        return DB.get_white_standards()
-        
-
-def add_new_creator():
-    """Record a new object creator inside the object_creators.txt file.
+def get_institution_info():
+    """Retrieve the information about the institution of the users.  
     """
-
-    DB = databases.DB()    
-    return DB.add_new_creator()
+    return config.get_institution_info
 
 
-def add_new_institution():
-    """Record a new institution inside the institutions.txt file.
-    """
-
-    DB = databases.DB()    
-    return DB.add_new_institution()
-
-
-def add_new_project():
-    """Record the information about a new project inside the DB_projects.csv file.
-    """
-
-    DB = databases.DB()    
-    return DB.add_new_project()
-
-
-def add_new_object():
-    """Record the information about a new object inside the DB_objects.csv file.
-    """
-
-    DB = databases.DB()    
-    return DB.add_new_object()
-
-
-def add_new_person():
-    """Record the information of a new person inside the pesons.txt file.
-    """
-
-    DB = databases.DB()    
-    return DB.add_new_person()
-
-
-def update_DB_objects(new: str, old:Optional[str] = None):
-    """Add a new column or modify an existing one in the DB_objects.csv file.
-
-    Parameters
-    ----------
-    new : str
-        value of the new column
-
-    old : Optional[str], optional
-        value of the old column to be replaced, by default None        
-    """    
-
-    DB = databases.DB()
-    DB.update_db_objects(new=new, old=old) 
-
-
-def update_DB_projects(new: str, old:Optional[str] = None):
-    """Add a new column or modify an existing one in the DB_projects.csv file.
-
-    Parameters
-    ----------
-    new : str
-        value of the new column
-        
-    old : Optional[str], optional
-        value of the old column to be replaced, by default None        
-    """
-
-    DB = databases.DB()
-    DB.update_db_projects(new=new, old=old) 
-
-
-def add_devices():
-    """
-    Register measurement devices.
-    """
-
-    DB = databases.DB()
-
-    style = {"description_width": "initial"}
-    RS_process_functions = ['MFT_fotonowy']
-    
-    # Define ipython widgets
-    nb_widget = ipw.Text(        
-        value='',
-        placeholder='Id number of the device or just a number',
-        description='Id',
-        style=style,               
-    )
-
-    name_widget = ipw.Text(        
-        value='',
-        placeholder='One word description',
-        description='Name',
-        style=style,               
-    )
-
-    description_widget = ipw.Text(        
-        value='',
-        placeholder='One line device description',
-        description='Description',
-        style=style,               
-    )
-
-    RS_function_widget = ipw.Dropdown(        
-        value=RS_process_functions[0],
-        options=RS_process_functions,
-        description='Process function name',
-        style=style,               
-    )
-
-    registering = ipw.Button(
-        description='Register the device',
-        disabled=False,
-        button_style='', # 'success', 'info', 'warning', 'danger' or ''
-        tooltip='Click me', 
-        style=style,           
-    )      
-
-    button_record_output = ipw.Output()
-
-    def button_record_pressed(b):
-        """
-        Save the device info in the devices.txt file.
-        """
-
-        button_record_output.clear_output(wait=True)
-
-        device_id = nb_widget.value.strip()
-        device_name = name_widget.value.strip()
-        device_description = description_widget.value.strip()
-        RS_function = RS_function_widget.value.strip()
-
-        df_devices = pd.read_csv(f'{DB.folder_db}/devices.txt')
-        device_Ids = df_devices['Id'].values
-
-        if device_id not in device_Ids:
-
-            df_devices = pd.concat([df_devices, pd.DataFrame(data=[device_id,device_name,device_description,RS_function], index=['Id','name','description','process_function']).T])
-            df_devices.to_csv(f'{DB.folder_db}/devices.txt', index=False)
-
-            with button_record_output:
-                print(f'Device registered in the following file: {DB.folder_db}/devices.txt')
-
-        else:
-            with button_record_output:
-                print('The Id number you entered is already assigned to another device. Please choose another Id number.')
-            
-
-    registering.on_click(button_record_pressed)
-
-    display(ipw.VBox([nb_widget,name_widget,description_widget,RS_function_widget]))
-    display(ipw.HBox([registering,button_record_output]))
-
-
-def add_references():
-    """
-    Register white standard references.
-    """
-
-    DB = databases.DB()
-    style = {"description_width": "initial"}
-
-    # Define ipython widgets
-    nb_widget = ipw.Text(        
-        value='',
-        placeholder='Id number of the item or just a number',
-        description='Id',               
-    )
-
-    description_widget = ipw.Text(        
-        value='',
-        placeholder='One line device description',
-        description='Description',               
-    )   
-
-    registering = ipw.Button(
-        description='Register the item',
-        disabled=False,
-        button_style='', # 'success', 'info', 'warning', 'danger' or ''
-        tooltip='Click me', 
-        style=style,           
-    )      
-
-    button_record_output = ipw.Output()
-
-    def button_record_pressed(b):
-        """
-        Save the reference info in the white_references.txt file.
-        """
-
-        button_record_output.clear_output(wait=True)
-
-        reference_id = nb_widget.value.strip()        
-        reference_description = description_widget.value.strip()
-        
-
-        df_references = pd.read_csv(f'{DB.folder_db}/white_references.txt')
-        reference_Ids = df_references['Id'].values
-
-        if reference_id not in reference_Ids:
-
-            df_references = pd.concat([df_references, pd.DataFrame(data=[reference_id,reference_description], index=['Id','description']).T])
-            df_references.to_csv(f'{DB.folder_db}/white_references.txt', index=False)
-
-            with button_record_output:
-                print(f'Item registered in the following file: {DB.folder_db}/white_references.txt')
-
-        else:
-            with button_record_output:
-                print('The Id number you entered is already assigned to another white reference. Please choose another Id number.')
-            
-
-    registering.on_click(button_record_pressed) 
-
-    display(ipw.VBox([nb_widget,description_widget]))
-    display(ipw.HBox([registering,button_record_output]))
-
-
-
-def process_rawdata(files: list, device: str, filenaming:Optional[str] = 'none', folder:Optional[str] = '.', db:Optional[bool] = 'default', comment:Optional[str] = '', interpolation_wl:Optional[tuple] = 'default', rounding_sp:Optional[int] = 4, authors:Optional[str] = 'XX', white_standard:Optional[str] = 'default', observer:Optional[str] = 'default', illuminant:Optional[str] = 'default', delete_files:Optional[bool] = False, return_filename:Optional[bool] = True):
+def process_rawdata(files: list, device: str, filenaming:Optional[str] = 'default', folder:Optional[str] = '.', db:Optional[bool] = 'default', comment:Optional[str] = '', interpolation_wl:Optional[tuple] = 'default', rounding_sp:Optional[int] = 4, authors:Optional[str] = 'XX', white_standard:Optional[str] = 'default', observer:Optional[str] = 'default', illuminant:Optional[str] = 'default', delete_files:Optional[bool] = False, return_data:Optional[bool] = True):
     """Process the reflectance spectroscopy raw files created by the software that performed the analysis. 
 
     Parameters
@@ -645,114 +279,142 @@ def process_rawdata(files: list, device: str, filenaming:Optional[str] = 'none',
         It returns an excel file composed of three tabs (info, CIELAB, spectra).
     """
 
-    # Load the databases function and config file
-    DB = databases.DB()
-    db_config = DB.get_db_config()
+    # Load the databases function and config file    
+    config_info = config.get_config_info()
     
     
     # Set the db value
     if db == 'default':
-        if len(db_config['databases']) == 0:
+        if len(config_info['databases']) == 0:
             db = False            
         else:
-            db = DB.get_db_config()['databases']['usage']
+            db = config_info['databases']['usage']
 
     
     # Set the observer value
     if observer == 'default':        
-        if len(db_config['colorimetry']) == 0:
+        if len(config_info['colorimetry']) == 0:
             observer = '10deg'
         else:
-            observer = DB.get_colorimetry_info().loc['observer'].values[0]
+            observer = config.get_colorimetry_info().loc['observer'].values[0]
 
     
     # Set the illuminant value
     if illuminant == 'default':
-        if len(db_config['colorimetry']) == 0:
+        if len(config_info['colorimetry']) == 0:
             illuminant = 'D65'
         else:
-            illuminant = DB.get_colorimetry_info().loc['illuminant'].values[0]
+            illuminant = config.get_colorimetry_info().loc['illuminant'].values[0]
 
     
     # Set the white reference value
-    if white_standard == 'default':
-        if len(db_config['colorimetry']) == 0:
-            white_standard = 'undefined'
-        else:
-            white_standard = DB.get_colorimetry_info().loc['white_standard'].values[0]  
+    white_standard = utils.get_white_standard(white_standard, db, device_id=device)
+
+    
+    # Set the authors names
+    authors = utils.get_authors(authors, db)
+    
 
     # Set the wavelengths interpolation behaviour
     if interpolation_wl == 'default' and db == False:
         interpolation_wl = 'none'
+
+    elif interpolation_wl == 'default' and db == True:
+        interpolation_wl = config.get_config_info()['devices'][device]['interpolation']
+        
     
-    print(db, white_standard,illuminant,observer)
+    # Retrieve the defined process function
+    if device in ['ASD', 'Avt','KM', 'OO', 'Tidas']:
+        process_functions = {'ASD':'RS_ASD', 'Avt':'RS_Avt','KM':'RS_KM', 'OO':'RS_OO', 'Tidas':'RS_Tidas'}
+        process_function = process_functions[device]
+
+    elif device in config_info['devices'].keys():                     
+        process_function = config_info['devices'][device]['process_function']
+
+    else:
+        print(f'Processed aborted ! The device parameter you entered ("{device}") has not been registered in the configuration file.)')
+        print('To register info in the configuration file, see the documentation: https://g-patin.github.io/reflectance/')
+        return
+    
     
     # Run the process_rawfiles function according to the microfading device
-    if "_" in device:        
-
-        if device.split('_')[0].lower() == 'tidas':
-            return process_rawfiles.RS_Tidas(files=files, filenaming=filenaming, folder=folder, db=db, comment=comment, device_ID=device, interpolation_wl=interpolation_wl, rounding_sp=rounding_sp, authors=authors, white_standard=white_standard, observer=observer, illuminant=illuminant, delete_files=delete_files, return_filename=return_filename)
-
-
-    else:        
+    if process_function == 'RS_Tidas':        
         
-        if device.lower() == 'tidas': 
-            return process_rawfiles.RS_Tidas(files=files, filenaming=filenaming, folder=folder, db=db, comment=comment, device_ID=device, interpolation_wl=interpolation_wl, rounding_sp=rounding_sp, authors=authors, white_standard=white_standard, observer=observer, illuminant=illuminant, delete_files=delete_files, return_filename=return_filename)
+        return process_rawfiles.RS_Tidas(files=files, filenaming=filenaming, folder=folder, db=db, comment=comment, device_ID=device, interpolation_wl=interpolation_wl, rounding_sp=rounding_sp, authors=authors, white_standard=white_standard, observer=observer, illuminant=illuminant, delete_files=delete_files, return_filename=return_data)
+    
+
+    if process_function == 'RS_Avt':        
+        
+        return process_rawfiles.RS_Avt(files=files, filenaming=filenaming, folder=folder, db=db, comment=comment, device_ID=device, interpolation_wl=interpolation_wl, rounding_sp=rounding_sp, authors=authors, white_standard=white_standard, observer=observer, illuminant=illuminant, delete_files=delete_files, return_data=return_data)
 
 
+
+def remove_devices_info():
+    """Remove the information of a desired device from the config_info.json file.  
+    """
+    return config.remove_devices_info()
+    
+
+
+def reset_config():
+    """Reset the content of config_info.json to its initial state, i.e. all empty dictionaries.  
+    """
+    return config.reset_config()
 
 
 def set_colorimetry_info():
-    """Record the colorimetric information (observer and illuminant) in the db_config.json file of the reflectance package.
+    """Record the colorimetric information (observer and illuminant) in the config_info.json file of the reflectance package.
     """
-
-    DB = databases.DB()
-    return DB.set_colorimetry_info()
+    return config.set_colorimetry_info()   
 
 
 def set_config_info():
+    """Add new information inside config_info.json file
 
-    DB = databases.DB()
-    return DB.set_config_info()
+    Returns
+    -------
+    It returns an ipywidgets where you can update the content of the config_info.json file
+    """
+    
+    return config.set_config_info()
 
 
 def set_comments_info():
     """Record the comments order in the db_config.json file of the reflectance package. 
     It is only relevant if the software of the device has a "comment" entry where you can insert information.
     """
-
-    DB = databases.DB()
-    return DB.set_comment_info()
+    return config.set_comment_info()
 
 
 def set_DB(folder_path:Optional[str] = '', use:Optional[bool] = True):
     """Record the databases info in the db_config.json file of the reflectance package.
+    """    
+    return config.set_db(folder_path=folder_path, use=use)    
+
+
+def set_devices_info():
+    """Record the information related to the measurement device in the config_info.json file.
     """
-
-    DB = databases.DB()
-    return DB.set_db(folder_path=folder_path, use=use)
+    return config.set_devices_info()
 
 
-def set_devices_info(device_ID):
-    """Record devices-related information in the db_config.json file.
+def set_filenaming_interim():
+    """Set the filenaming of interim files in the config_info.json file.
     """
-
-    DB = databases.DB()
-    return DB.set_devices_info(device_ID)
+    return config.set_filenaming_interim()
 
 
-def set_devices_keys():
-
-    DB = databases.DB()
-    return DB.set_devices_keys()
-
-
-def set_fibers_info():
-    """Record the fiber optics information in the db_config.json file.
+def set_filenaming_raw():
+    """Set the filenaming of raw files in the config_info.json file.
     """
+    return config.set_filenaming_raw()
 
-    DB = databases.DB()
-    return DB.set_fibers_info()
+
+def set_institution_info():
+    """Set the institution information in the config_info.json file.
+    """
+    return config.set_institution_info()
+
 
 
 #### REFLECTANCE CLASS ####         
@@ -999,24 +661,24 @@ class RS(object):
         -------
         pandas dataframe
             It returns the L*a*b* values inside a dataframe where each column corresponds to a single file.
-        """    
-        DB = databases.DB()
+        """           
+        
 
         if observer == 'default':
-            if len(DB.get_colorimetry_info()) == 0:
+            if len(config.get_colorimetry_info()) == 0:
                 observer = '10deg'
             else:                
-                observer = DB.get_colorimetry_info().loc['observer']['value']
+                observer = config.get_colorimetry_info().loc['observer']['value']
 
         else:
             observer = f'{str(observer)}deg'
 
 
         if illuminant == 'default':
-            if len(DB.get_colorimetry_info()) == 0:
+            if len(config.get_colorimetry_info()) == 0:
                 illuminant = 'D65'
             else:
-                illuminant = DB.get_colorimetry_info().loc['illuminant']['value']
+                illuminant = config.get_colorimetry_info().loc['illuminant']['value']
 
         
         observers = {
@@ -1542,13 +1204,13 @@ class RS(object):
         
         # Whether to plot the observer and illuminant info
         if obs_ill:
-            DB = databases.DB()
-            if len(DB.get_colorimetry_info()) == 0:
+            
+            if len(config.get_colorimetry_info()) == 0:
                 observer = '10deg'
                 illuminant = 'D65'
             else:
-                observer = DB.get_colorimetry_info().loc['observer']['value']
-                illuminant = DB.get_colorimetry_info().loc['illuminant']['value']
+                observer = config.get_colorimetry_info().loc['observer']['value']
+                illuminant = config.get_colorimetry_info().loc['illuminant']['value']
 
             dic_obs = {'10deg':'$\mathrm{10^o}$', '2deg':'$\mathrm{2^o}$'}            
             obs_ill = f'{dic_obs[observer]}-{illuminant}'
@@ -1962,25 +1624,23 @@ class RS(object):
         pandas dataframe
             It returns the sRGB values inside a dataframe where each column corresponds to a single file.
         """
-
-
-        DB = databases.DB()
+                
 
         if observer == 'default':
-            if len(DB.get_colorimetry_info()) == 0:
+            if len(config.get_colorimetry_info()) == 0:
                 observer = '10deg'
             else:
-                observer = DB.get_colorimetry_info().loc['observer']['value']
+                observer = config.get_colorimetry_info().loc['observer']['value']
 
         else:
             observer = f'{str(observer)}deg'
 
 
         if illuminant == 'default':
-            if len(DB.get_colorimetry_info()) == 0:
+            if len(config.get_colorimetry_info()) == 0:
                 illuminant = 'D65'
             else:
-                illuminant = DB.get_colorimetry_info().loc['illuminant']['value']
+                illuminant = config.get_colorimetry_info().loc['illuminant']['value']
         
         
         observers = {
@@ -2058,23 +1718,22 @@ class RS(object):
             It returns the XYZ values inside a dataframe where each column corresponds to a single file.
         """
 
-        DB = databases.DB()
-
+        
         if observer == 'default':
-            if len(DB.get_colorimetry_info()) == 0:
+            if len(config.get_colorimetry_info()) == 0:
                 observer = '10deg'
             else:
-                observer = DB.get_colorimetry_info().loc['observer']['value']
+                observer = config.get_colorimetry_info().loc['observer']['value']
 
         else:
             observer = f'{str(observer)}deg'
 
 
         if illuminant == 'default':
-            if len(DB.get_colorimetry_info()) == 0:
+            if len(config.get_colorimetry_info()) == 0:
                 illuminant = 'D65'
             else:
-                illuminant = DB.get_colorimetry_info().loc['illuminant']['value']
+                illuminant = config.get_colorimetry_info().loc['illuminant']['value']
         
         
         cmfs_observers = {
@@ -2122,25 +1781,23 @@ class RS(object):
         pandas dataframe
             It returns the xy values inside a dataframe where each column corresponds to a single file.
         """
-
-
-        DB = databases.DB()
+        
 
         if observer == 'default':
-            if len(DB.get_colorimetry_info()) == 0:
+            if len(config.get_colorimetry_info()) == 0:
                 observer = '10deg'
             else:
-                observer = DB.get_colorimetry_info().loc['observer']['value']
+                observer = config.get_colorimetry_info().loc['observer']['value']
 
         else:
             observer = f'{str(observer)}deg'
 
 
         if illuminant == 'default':
-            if len(DB.get_colorimetry_info()) == 0:
+            if len(config.get_colorimetry_info()) == 0:
                 illuminant = 'D65'
             else:
-                illuminant = DB.get_colorimetry_info().loc['illuminant']['value']
+                illuminant = config.get_colorimetry_info().loc['illuminant']['value']
      
         
         cmfs_observers = {
