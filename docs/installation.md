@@ -1,14 +1,14 @@
 
-To install the latest version of the microfading package, open a terminal and enter the following command:
+To install the latest version of the reflectance package, open a terminal and enter the following command:
 
 ```
-pip install microfading
+pip install reflectance
 ```
 
-If you wish to install a specific version of the microfading package, the version number can be added to the pip command as illustrated in the following example:
+If you wish to install a specific version of the reflectance package, the version number can be added to the pip command as illustrated in the following example:
 
 ```
-pip install microfading==1.0.10
+pip install reflectance==0.1.1
 ```
 
 &nbsp;
@@ -16,5 +16,5 @@ pip install microfading==1.0.10
 To upgrade the package, open a terminal and enter the following command
 
 ```
-pip install --upgrade microfading
+pip install --upgrade reflectance
 ```

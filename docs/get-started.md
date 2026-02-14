@@ -1,0 +1,101 @@
+In this section, we will give you all the essential information to correctly start using the `reflectance` package.
+
+## 1. **Do you have reflectance data files?**
+
+The whole package is based on reflectance data files that you either obtained yourself when performing reflectance measurements or obtained from someone else. Each file corresponds to a single measurement and consists of an excel file with a specific structure organizing the data inside the file. Check the [datafiles section](https://g-patin.github.io/reflectance/datafiles/) for more information about the data files. 
+	
+If you don't have any reflectance files, the package has a function to load reflectance files, so that you can use these files to play with the functionalities of the package (see [get_datasets](https://g-patin.github.io/reflectance/get_datasets/) section).  
+	
+If you have files, the following lines of code shows how you can import them in the jupyter notebook:
+&nbsp;
+
+```python
+# I use this package to select files on my local computer
+from glob import glob 
+```
+
+
+```python	
+# I use the command 'cd <path>' to change the current directory and be in the folder where the reflectance files are.
+cd /home/username/Documents/RS
+```
+
+
+```python
+# Using the glob method, I select the files that contain the words 'BW1' and 'RS' in the filename.
+files = sorted(glob('*BW1*RS*'))
+files
+```
+
+<div class="output-area">
+<pre>[PosixPath('/home/username/Documents/RS/2024-144_RS.BWS002.G01_avg_BW1_model_2024-07-30_SP2.xlsx'),
+PosixPath('/home/username/Documents/RS/2024-144_RS.BWS003.G01_avg_BW1_model_2024-08-02_SP2.xlsx')]
+</pre>
+</div>
+&nbsp;
+
+
+## 2. **Central role of the `RS` class**
+
+Once you have selected reflectance files and encapsulated them inside a python list, you will need to create an instance of the `RS` class passing the variable for your reflectance files as argument (see code below). Most of the functions provided by the package can only be accessed through the `RS` class.  
+&nbsp;
+	
+```python
+import reflectance as rf
+```
+
+```python
+rs = rf.RS(files=files)
+rs
+```
+
+<div class="output-area">
+<pre>Reflectance data class - Number of files = 2
+</pre>
+</div>
+
+&nbsp;
+		
+	
+## 3. **Three keywords function: get, plot, compute**
+
+Once you have created an instance of the `RS` class, you can access the functions. The name of each function starts by a verb: get, plot, or compute. Enter one of the verbs and use the auto-completion tool (`Tab` button) to display a list of available functions.
+
+![Alt text](images/mf_functions.png){: .img-medium align=left }
+/// caption
+List of all the plotting functions.
+///
+	
+The functions can be run without passing any arguments, this will output the default values. To adjust the output to your needs, you will need to modify the values of the arguments. For instance, the function `get_cielab()` returns the $\Delta E_{00}$ values by default. If you want to retrieve other CIELAB coordinates, you will need to pass in a new value for the argument *coordinates* (see code below). To know the role of each argument in a function and which values can you pass in, you will need to read the documentation (see below). The latter can either be access in the jupyter notebook or in the [References section](https://g-patin.github.io/reflectance/references/) of this website.
+	
+![Alt text](images/mf_functions_arguments.png){: .img-large align=left }
+/// caption
+Play with the argument values of functions 
+///
+
+
+## 4. **Use the databases**
+
+If you are planning to perform reflectance measurements more than once, we advise you to make use of the databases. This will allow you to save metadata about the measured objects in the excel data file, which can ultimately be used to perform queries. For example, you could ask to retrieve all measurements performed on a given material or on objects created by a specific artist,etc. Unfortunately, such as a possibility has not been implemented yet.
+	
+To start using the databases, you will first need to create them and fill them with some information. To learn how to create databases, see the [Create databases section](https://g-patin.github.io/reflectance/create-databases/). To learn how to fill the databases and properly manage them, see the [Databases management section](https://g-patin.github.io/reflectance/databases-management/). 
+
+
+## 5. **Use the docstrings**
+
+Whenever you will use functions from the `reflectance` package, you will always be able to access the docstrings. These contain valuable information that will help you to adequately use the functions. To open the dosctrings, you have two possibilites:
+
+1. Write the name of a function (without parentheses) followed by a question mark (see example below).
+
+	![Alt text](images/mf_docstrings-example_02.png){: .img-Large align=left }
+	/// caption
+	Opening a docstring with a question mark.
+	///
+
+
+2. Write the name of a function (with parentheses), place the cursor inside the parentheses and press `Ctrl + Caps Lock` (see example below).
+
+![Alt text](images/mf_docstrings-example_01.png){: .img-Large align=left }
+/// caption
+Opening a tooltip docstring window.
+///
