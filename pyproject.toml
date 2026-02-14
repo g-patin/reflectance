@@ -29,6 +29,7 @@ dependencies = [
     "jupyterlab",
     "xarray",
     "ipywidgets",
+    "msdb",
 ]
 
 [project.urls]
