@@ -1,4 +1,5 @@
 import os
+import sys
 import pandas as pd
 import numpy as np
 import colour
@@ -8,38 +9,298 @@ from typing import Optional, Union
 import scipy.interpolate as sip
 from scipy.interpolate import RegularGridInterpolator
 from io import StringIO
+from datetime import datetime
+import msdb
 
-
-from . import databases
 from . import RS_info_templates
+from . import config
+from . import utils
 
 
-def RS_Tidas(files: list, device_ID:Optional[str] = 'default', db:Optional[bool] = 'default', filenaming:Optional[str] = 'none', folder:Optional[str] = '.',  comment:Optional[str] = '', interpolation_wl:Optional[tuple] ='default', rounding_sp:Optional[int] = 'none',  authors:Optional[str] = 'XX', white_standard:Optional[bool] = 'default', observer:Optional[str] = 'default', illuminant:Optional[str] = 'default', background:Optional[str] = 'black', delete_files:Optional[bool] = True, return_filename:Optional[bool] = True):
+def RS_Avt(files: list, device_ID:Optional[str] = 'default', db:Optional[bool] = 'default', filenaming:Optional[str] = 'none', folder:Optional[str] = '.',  comment:Optional[str] = '', wl_range:Optional[tuple] = (180,1100,1), interpolation_wl:Optional[tuple] ='default', rounding_sp:Optional[int] = 'none',  authors:Optional[str] = 'XX', white_standard:Optional[bool] = 'undefined', observer:Optional[str] = '10deg', illuminant:Optional[str] = 'D65', background:Optional[str] = 'black', delete_files:Optional[bool] = True, return_data:Optional[bool] = False, save:Optional[bool] = True):
+
+    
+    # define the illuminant value
+    illuminant_SDS, illuminant_CCS = utils.get_illuminant(illuminant, observer, db)
+    
+    # define the color matching functions
+    cmfs = utils.get_cmfs(observer, db)    
+    
+    # get the raw files
+    raw_files = [Path(file) for file in files if '.txt' in Path(file).name]    
+    
+    ####### PROCESS RAW FILES ########
+
+    for raw_file in raw_files:
+
+        ####### DEFINE FILENAME ########
+        
+        file_path = Path(raw_file) 
+        stemName = file_path.stem
+
+
+        ####### OPEN RAW FILE ########
+
+        file_content = open(raw_file).read()
+        lookfor = 'Wave'        
+        parameters = file_content[:file_content.index(lookfor)].splitlines() 
+
+        
+        ####### RETRIEVE ANALYTICAL PARAMETERS ########
+
+        dic_parameters = {}
+
+        for i in parameters[1:]:
+            dic_parameters[i.split(':')[0]]=[i.split(':')[1]]
+                
+        df_parameters = pd.DataFrame.from_dict(dic_parameters).T
+
+        df_parameters.columns = ['value']            
+        df_parameters.index.names = ['parameter'] 
+
+        df_parameters = df_parameters.rename(index={'Date':'date_time'}) 
+
+
+        ####### PROCESS SPECTRAL DATA ########
+
+        # retrieve wavelengths and spectral values
+        wavelengths = [float(x.split(';')[0]) for x in file_content[file_content.index(lookfor):].splitlines()[3:-1]]
+        sp_raw = [float(x.split(';')[-1]) / 100 for x in file_content[file_content.index(lookfor):].splitlines()[3:-1]]
+
+        
+        # interpolate spectral values
+        if interpolation_wl:
+            wanted_wl = np.arange(*wl_range)
+            wanted_sp = sip.interp1d(wavelengths, sp_raw)(wanted_wl)
+                        
+        else:
+            wanted_wl = wavelengths
+            wanted_sp = sp_raw
+
+
+        # create spectral dataframe
+        df_sp = pd.DataFrame({'wavelength_nm':wanted_wl, 'reflectance':wanted_sp})
+        df_sp = df_sp.set_index('wavelength_nm')       
+
+        
+        # rounding the spectral data
+        if rounding_sp == 'none':
+            df_sp = df_sp
+        elif isinstance(rounding_sp,int):
+            df_sp = np.round(df_sp,rounding_sp)  
+        else:
+            print(f"The value '{rounding_sp}' you entered is not valid. Please enter a positive integer.")
+            return
+        
+        
+        ####### CONVERT THE REFLECTANCE VALUES TO COLORIMETRIC VALUES ########
+        
+        sd = [colour.SpectralDistribution(x,df_sp.index) for x in df_sp.T.values]                 
+
+        XYZ = [colour.sd_to_XYZ(x,cmfs,illuminant=illuminant_SDS) for x in sd]        
+        xy = [np.round(colour.XYZ_to_xy(x),4) for x in XYZ]        
+        Lab = [np.round(colour.XYZ_to_Lab(x/100, illuminant_CCS),3) for x in XYZ]        
+        LCh = [np.round(colour.Lab_to_LCHab(x),3) for x in Lab]        
+        values_cielab = [[list(x)+list(y)+list(z[1:])][0] for x,y,z in zip(xy,Lab,LCh)]
+
+        dict_cielab = dict(zip(df_sp.columns,values_cielab))
+        df_cielab = pd.DataFrame.from_dict(dict_cielab,orient='index', columns=['x','y','L*','a*','b*','C*','h']).T
+        df_cielab.index.name = 'coordinates'
+
+        
+        # add a new row 'value' at the top
+        df_value = pd.DataFrame(df_sp.shape[1] * ['value'], columns=['value']).T
+        df_value.index.name = 'wavelength_nm'            
+        df_value.columns = df_sp.columns
+        df_sp = pd.concat([df_value, df_sp])
+
+        df_value.index.name = 'coordinates'  
+        df_cielab = pd.concat([df_value, df_cielab])
+       
+        
+        ####### RETRIEVE INFO ########
+
+        date_time_analysis = ''
+        date_time_processing = datetime.now()
+
+        average = int(float(df_parameters.loc['Averaging Nr. [scans]','value']))
+        integration_time = int(float(df_parameters.loc['Integration time [ms]','value']))
+        smoothing = int(float(df_parameters.loc['Smoothing Nr. [pixels]','value']))
+
+        meas_id = ''
+        group = 'unknown'
+        group_description = 'undefined'
+        spot_size = 'unknown'
+
+        values_analysis = [
+            " ",
+            meas_id,
+            group,
+            group_description,
+            spot_size,
+            background,
+            integration_time,
+            average,
+            smoothing,
+            1,   # measurements_N
+            white_standard
+        ]
+
+        print(values_analysis)
+        return
+
+        ####### CREATE INFO DATAFRAME ########
+
+        if db:
+
+            # retrieve the configuration info
+            config_info = config.get_config_info()
+            
+            # check whether database files have been created
+            if len(config_info['databases']) == 0:
+                return 'Databases have not been created. Please, create databases by running the function "create_DB" from the reflectance package.'
+            
+            else:             
+                db_name = config_info['databases']['db_name'] 
+                db = msdb.DB(db_name)
+                db_projects = db.get_projects()
+                db_objects = db.get_objects()
+
+                # remove the column 'project_id'
+                if 'project_id' in db_objects.columns:
+                    db_objects = db_objects.drop('project_id', axis=1)
+
+            params_project = db_projects.columns
+            params_object = db_objects.columns
+
+
+        else:
+            params_project = RS_info_templates.project_info
+            params_object = RS_info_templates.object_info
+
+            values_project = len(params_project) * ['']
+            values_object = len(params_object) * ['']
+
+        
+        
+        values_general_info = [
+            'SINGLE REFLECTANCE MEASUREMENT',
+            authors,
+            date_time_analysis,
+            date_time_processing,
+            comment,
+        ]
+
+        values_colorimetry = [
+            illuminant,
+            observer,
+        ]
+
+        return values_general_info, values_colorimetry
+
+
+        params_general_info = RS_info_templates.general_info
+        params_analyses = RS_info_templates.analysis_info
+        params_colorimetry = RS_info_templates.colorimetric_info
+        params_system = RS_info_templates.system_info
+        params_device = RS_info_templates.device_info
+
+        info_parameters = params_general_info + params_project + params_object + params_system + params_device + params_analyses + params_colorimetry
+
+        info_values = values_general_info + values_project + values_object + values_system + values_device + values_analyses + values_colorimetry
+
+        dict_info = dict(zip(info_parameters,info_values))
+        df_info = pd.DataFrame.from_dict(dict_info,orient='index', columns=['value'])
+        df_info.index.name = 'parameter'
+
+
+
+
+
+        ####### RETURN DATA ########
+
+        if return_data:
+            return [df_cielab,df_sp]
+        
+
+        ####### SAVE DATA ########
+
+        if save:
+
+            # define the output filename
+            if filenaming == 'none':
+                filename = stemName
+
+            elif filenaming == 'auto':
+                group = stemName.split('_')[2]
+                group_description = stemName.split('_')[3]
+                object_type = df_info.loc['object_type']['value']
+                date = pd.to_datetime(date_time).date()
+                filename = f'{project_id}_{meas_id}_{group}_{group_description}_{object_type}_{date}'
+
+            elif isinstance(filenaming, list):
+
+                if 'date' in filenaming:
+                    new_df_info = df_info.copy()
+                    new_df_info.loc['date'] = str(df_info.loc['date_time']['value'].date())                    
+
+                    filename = "_".join([new_df_info.loc[x]['value'].split("_")[0] if "_" in new_df_info.loc[x]['value'] else new_df_info.loc[x]['value'] for x in filenaming])                    
+
+                else:                                  
+                    filename = "_".join([df_info.loc[x]['value'].split("_")[0] if "_" in df_info.loc[x]['value'] else df_info.loc[x]['value'] for x in filenaming])
+
+
+
+            # export the dataframes to an excel file
+            with pd.ExcelWriter(Path(folder) / f'{filename}.xlsx') as writer:
+
+                df_info.to_excel(writer, sheet_name='info', index=True)
+                df_cielab.to_excel(writer, sheet_name="CIELAB", index=True)            
+                df_sp.to_excel(writer, sheet_name="spectra", index=True)
+
+                    
+        ###### DELETE FILE #######        
+            
+        if delete_files:                      
+            [os.remove(file) for file in raw_files]
+            
+        print(f'{raw_file} has been successfully processed !')
+
+      
+
+
+def RS_Tidas(files: list, device_ID:Optional[str] = 'default', db:Optional[bool] = 'default', filenaming:Optional[str] = 'default', folder:Optional[str] = '.',  comment:Optional[str] = '', interpolation_wl:Optional[tuple] ='default', rounding_sp:Optional[int] = 'none',  authors:Optional[str] = 'XX', white_standard:Optional[bool] = 'default', observer:Optional[str] = 'default', illuminant:Optional[str] = 'default', background:Optional[str] = 'black', delete_files:Optional[bool] = True, return_filename:Optional[bool] = True):
 
     # check whether the objects and projects databases have been created    
+    config_info = config.get_config_info()
+    
     if db:    
-
-        DB = databases.DB()
-        if DB.folder_db is None or DB.folder_db == 'folder_path':
+        
+        if len(config_info['databases']) == 0:
             return 'Databases have not been created. Please, create databases by running the function "create_DB" from the reflectance package.'
         
-        else:     
-            db_projects, db_objects = DB.get_db()
+        else:             
+            db_name = config_info['databases']['db_name'] 
+            db_rs = msdb.DB(db_name)
+            db_projects = db_rs.get_projects()
+            db_objects = db_rs.get_objects()
+            db_white_standards = db_rs.get_white_standards().set_index('ID')
+            db_devices = db_rs.get_devices().set_index('ID')
 
             # remove the column 'project_id'
             if 'project_id' in db_objects.columns:
                 db_objects = db_objects.drop('project_id', axis=1)
     
     else:
-        filenaming = 'none'
+        filenaming = 'none' # override whatever input value for filenaming
      
 
     # define the illuminant value
     if illuminant == 'default' and db == True:
-        if len(DB.get_colorimetry_info()) == 0:
+        if len(config.get_colorimetry_info()) == 0:
             illuminant = 'D65'
         else:
-            illuminant = DB.get_colorimetry_info().loc['illuminant']['value']
+            illuminant = config.get_colorimetry_info().loc['illuminant']['value']
 
     elif illuminant == 'default' and db == False:
         illuminant = 'D65'
@@ -47,10 +308,10 @@ def RS_Tidas(files: list, device_ID:Optional[str] = 'default', db:Optional[bool]
     
     # define the observer
     if observer == 'default' and db == True:
-        if len(DB.get_colorimetry_info()) == 0:
+        if len(config.get_colorimetry_info()) == 0:
             observer = '10deg'
         else:
-            observer = DB.get_colorimetry_info().loc['observer']['value']
+            observer = config.get_colorimetry_info().loc['observer']['value']
 
     elif observer == 'default' and db == False:
         observer = '10deg'
@@ -74,12 +335,13 @@ def RS_Tidas(files: list, device_ID:Optional[str] = 'default', db:Optional[bool]
     cmfs = cmfs_observers[observer]
 
 
+    '''
     # define the authors names
     if authors == 'XX':
         authors_names = 'unknown' 
 
     elif db:
-        df_authors = DB.get_persons()
+        df_authors = db.get_users()
         if '-' in authors or ' - ' in authors:                     
             list_authors = []
             for x in authors.split('-'):
@@ -89,6 +351,7 @@ def RS_Tidas(files: list, device_ID:Optional[str] = 'default', db:Optional[bool]
             authors_names = '_'.join(list_authors)
                     
         else:            
+            print(authors)
             if authors in df_authors['initials'].values:
                 df_author = df_authors[df_authors['initials'] == authors]
                 authors_names = f"{df_author['surname'].values[0]}, {df_author['name'].values[0]}"
@@ -99,25 +362,38 @@ def RS_Tidas(files: list, device_ID:Optional[str] = 'default', db:Optional[bool]
 
     else:
         authors_names = authors
-
+    '''
 
     # retrieve the white standard info
     if white_standard == 'default' and db == True:
-        if len(DB.get_colorimetry_info()) == 0:
+        if len(config.get_colorimetry_info()) == 0:
             white_standard = 'undefined'
         else:
-            white_standard_ID = DB.get_colorimetry_info().loc['white_standard']['value']
+            white_standard_ID = config.get_config_info()['devices'][device_ID]['white_standard']
+            white_standard_description = db_white_standards.loc[white_standard_ID,'description']
+            white_standard = f'{white_standard_ID}_{white_standard_description}'
 
     elif white_standard == 'default' and db == False:
         white_standard = 'undefined'
     
+    
+    # define the host organization
+    if len(config_info['institution']) == 0:
+        host_organization = 'undefined'
+            
+    else:
+        host_organization = config_info['institution']['name']
+
+    
+
 
     # retrieve the general device info
 
     if db:
-        config_devices = DB.get_db_config()['devices']
-        config_device = config_devices[device_ID]
+        config_devices = config_info['devices']
+        config_device = config_devices[device_ID]       
 
+        device_type = config_device['device_type']
         device_model = config_device['model']
         device_brand = config_device['brand']
         geometry = config_device['geometry']
@@ -127,12 +403,12 @@ def RS_Tidas(files: list, device_ID:Optional[str] = 'default', db:Optional[bool]
 
         
     
-    # get the raw files
-    raw_txt_files = [Path(file) for file in files if '.txt' in Path(file).name]    
-    
-    
+    # get the raw files with the measurement data (c01)
+    raw_txt_files = [Path(file) for file in files if '.txt' in Path(file).name and 'c01_' in Path(file).name]    
 
-    # process each raw file
+        
+    #### PROCESS EACH RAW FILE ####
+    
     for raw_file in raw_txt_files:
 
         # get the raw files (to be deleted at the end)
@@ -148,84 +424,34 @@ def RS_Tidas(files: list, device_ID:Optional[str] = 'default', db:Optional[bool]
           
         ####### RETRIEVE THE INFO ########    
           
-        lookfor_params = '[LOGIN]'                
-            
-        string_header = '\n'.join([ x.strip()[:] for x in f[:f.index(lookfor_params)].splitlines()[1:]])
-        string_params = '\n'.join([ x.strip()[:] for x in f[f.index(lookfor_params)+len(lookfor_params):f.index('[DIO]')].splitlines()[1:]])
-                
+        lookfor_value = '[LOGIN]' 
+
+        # retrieve header info (before the lookfor_value)           
+        string_header = '\n'.join([ x.strip()[:] for x in f[:f.index(lookfor_value)].splitlines()[1:]])
         fake_file_header = StringIO(string_header)
-        fake_file_params = StringIO(string_params)
-            
-        df_header = pd.read_csv(fake_file_header, sep = '\t')    
+        df_header = pd.read_csv(fake_file_header, sep = '\t')
+
+        # retrieve analytical info (after the lookfor_value)
+        string_params = '\n'.join([ x.strip()[:] for x in f[f.index(lookfor_value)+len(lookfor_value):f.index('[DIO]')].splitlines()[1:]])
+        fake_file_params = StringIO(string_params)            
         df_params = pd.read_csv(fake_file_params, sep = '=', header = None, names = ['parameter', 'value']).set_index('parameter')   
-       
-        comments_keys = df_header.set_index('Format').loc['Comment'].values[0].split('_')
-        date_time = df_header.set_index('Format').loc['Date'].values[0]
-                
         
-        # define the general info parameters and values
-        parameters_general_info = [
-            "[SINGLE REFLECTANCE MEASUREMENT]",
-            "authors",
-            "date_time",
-            "comment",
-            ]
-        
-        values_general_info = [
-            ' ',
-            authors_names,
-            date_time,
-            comment,
-        ]
-        
-
-        # define the device parameters and values
+        # retrieve the comment line info
+        comment_info = df_header.set_index('Format').loc['Comment'].values[0].split('_')
         if db:
-            parameters_device = RS_info_templates.device_info
-            comments_parameters = DB.get_db_config()['comments'][device_ID]
+            comment_keys = config_info['comments'][device_ID]
+                
+        # retrieve the datetime info
+        date_time_analysis = df_header.set_index('Format').loc['Date'].values[0]
+        date_time_analysis = datetime.strptime(date_time_analysis, "%d/%m/%Y %H:%M:%S")        
+        date_time_processing = datetime.now()
 
-            db_config_keys = [x for x in DB.get_db_config().keys() if x not in ['colorimetry','comments','databases','devices']]
-            db_config_dicts = [DB.get_db_config()[x] for x in db_config_keys]
-            all_dicts = {}
-
-            for db_config_dict in db_config_dicts:
-                all_dicts.update(db_config_dict)
-
-            
-            comments_values = [all_dicts[x] if x in all_dicts.keys() else x for x in comments_keys]
-            
-                    
-            values_device = [
-                " ",
-                device_ID,
-                device_brand,
-                device_model,
-                "measurement_mode",
-                "zoom",
-                "iris",
-                geometry,
-                "lamp",
-                "filter_ill",
-                fiber_ill,
-                fiber_coll,
-                "distance_ill_mm",
-                "distance_coll_mm",
-                specular_component,             
-                white_standard,
-            ]
-
-        else:
-            parameters_device = list(df_params.index)[1:]
-            values_device = list(df_params.values.flatten())[1:]
-
-
-        # define the colorimetric parameters and values
-        parameters_colorimetry = ['[COLORIMETRIC INFO]','illuminant','observer']
-        values_colorimetry = [' ', illuminant, observer]
-
-
-        # create df_info to be saved
-
+        # retrieve analytical info
+        integration_time = int(float((df_params.loc['It']['value']).replace(',','.')))
+        average = int(float(df_params.loc['Aver']['value'])) 
+        
+        
+        # retrieve the filename info
         if db == False:   
                        
             if "_" in stemName:
@@ -233,12 +459,10 @@ def RS_Tidas(files: list, device_ID:Optional[str] = 'default', db:Optional[bool]
             else:
                 meas_id = stemName
 
-            info_parameters = parameters_general_info + ['meas_id'] + parameters_device + parameters_colorimetry
-            info_values = values_general_info + [meas_id] + values_device + values_colorimetry
-
-        else:
-
-            # retrieve info from filename
+            group = 'undefined'
+            group_description = 'undefined'
+            
+        else:            
             info = (file_path.name).split('_')
             project_id = info[0]
             object_id = info[1]
@@ -247,68 +471,168 @@ def RS_Tidas(files: list, device_ID:Optional[str] = 'default', db:Optional[bool]
             group_description = info[4]
 
             meas_id = f'RS.{object_id}.{meas_nb}'
+        
 
+        # create an empty df_info
+        
+        parameters_general_info = RS_info_templates.general_info  
+        parameters_device_info = RS_info_templates.device_info 
+        parameters_analysis_info = RS_info_templates.analysis_info
+        parameters_colorimetry_info = RS_info_templates.colorimetric_info     
+        
+        if db == False:
+
+            parameters_project_info = RS_info_templates.project_info
+            parameters_object_info = RS_info_templates.object_info                     
+            
+        else:
+            parameters_project_info =  ["[PROJECT INFO]"] + list(db_projects.columns)
+            parameters_object_info = ["[OBJECT INFO]"] + list(db_objects.columns)
+            
+            
+        info_parameters = parameters_general_info + parameters_project_info + parameters_object_info + parameters_device_info + parameters_analysis_info + parameters_colorimetry_info
+
+        df_info_empty = pd.DataFrame(index=info_parameters, columns=['value'])
+        df_info_empty.index.name = 'parameter'
+        df_info = df_info_empty.copy()
+        
+        # fill in general info
+        values_general_info = [
+            'SINGLE REFLECTANCE MEASUREMENT',
+            authors,
+            host_organization,
+            date_time_analysis,
+            date_time_processing,
+            comment,
+        ]
+
+        df_info.loc[parameters_general_info,'value'] = values_general_info
+                
+        
+        # fill in project info
+        if db and project_id in db_projects['project_id'].values: 
             db_projects = db_projects.set_index('project_id')
-
-            if project_id in db_projects.index:                
-                values_project = [' ', project_id] + list(db_projects.loc[project_id].values)
-
-            else:
-                print(f'Project ID "{project_id}" not registered ! If you want to use the databases, please first register the projects and objects in the databases using the function add_project() and add_object().')
-                return None
+            values_project_info = [' ',project_id] + list(db_projects.loc[project_id].values)
             
+            df_info.loc[parameters_project_info,'value'] = values_project_info
+
+
+        # fill in object info
+        if db and object_id in db_objects['object_id'].values: 
             db_objects = db_objects.set_index('object_id')
-            if object_id in db_objects.index:
-                values_object = [' ', object_id] + list(db_objects.loc[object_id].values)
-
-            else:
-                print(f'Object ID "{object_id}" not registered. If you want to use the databases, please first register the projects and objects in the databases using the function add_project() and add_object().')
-                return None
-
-            integration_time = int(float((df_params.loc['It']['value']).replace(',','.')))
-            average = int(float(df_params.loc['Aver']['value']))            
-            measurements_N = ''  # is defined at the end of the function      
-            spot_size = ''      
-
-            values_analyses = [
-                " ",
-                meas_id,
-                group,
-                group_description,
-                spot_size,
-                background,                
-                integration_time,
-                average,                
-                measurements_N,              
-            ]            
+            values_object_info = [' ',object_id] + list(db_objects.loc[object_id].values)
             
+            df_info.loc[parameters_object_info,'value'] = values_object_info
 
-            info_parameters = parameters_general_info + ["[PROJECT INFO]", "project_id"] + list(db_projects.columns) + ["[OBJECT INFO]", "object_id"] + list(db_objects.columns) + parameters_device + RS_info_templates.analysis_info + parameters_colorimetry
-            
-            info_values = values_general_info + values_project + values_object + values_device + values_analyses + values_colorimetry
-
-
-        dict_info = dict(zip(info_parameters,info_values))
-        df_info = pd.DataFrame.from_dict(dict_info,orient='index', columns=['value'])
-        df_info.index.name = 'parameter'
-
-        # Fill in some of the info values
         
+        # fill in device info
+                
+        if db and device_ID in config_info['devices'].keys():
+            
+            device_description = db_devices.loc[device_ID]['description']
+            df_info.loc['device_id','value'] = f'{device_ID}_{device_description}'
+            
+            device_info = config_info['devices'][device_ID]
+            
+
+            device_info_keys = (list(device_info.keys()))
+            device_info_keys.remove('process_function')
+        
+            for device_info_key in device_info_keys:
+                
+                device_value = device_info[device_info_key]
+                
+                if isinstance(device_value, dict):                    
+                    device_value = [device_value]
+
+                df_info.loc[device_info_key,'value'] = device_value
+
+        else:
+            
+            df_info.loc['device_type','value'] = 'Assembly'
+            df_info.loc['brand','value'] = 'J&M Analytik AG'
+            df_info.loc['model','value'] = f"{df_params.loc['Name']['value'].values[1]}_Serial#:{df_params.loc['Serial#','value']}"
+            df_info.loc['software_version','value'] = f'TIDASDAQ3-{df_params.loc["SWVersion","value"]}'
+
+
+        
+        # fill in the analysis info       
+        values_analysis_info = [
+            "",
+            meas_id, 
+            group,
+            group_description,
+            "",                  # spot_size,
+            background,
+            integration_time,
+            average,
+            "unknown",           # smoothing_pixels
+            "",                  # N_measurements, it is defined later
+            white_standard,            
+        ]
+        
+
+        df_info.loc[parameters_analysis_info,'value'] = values_analysis_info
+
+
+        # fill in the colorimetric info
+        values_colorimetry_info = [
+            "",
+            illuminant,
+            observer
+        ]
+        df_info.loc[parameters_colorimetry_info,'value'] = values_colorimetry_info
+        
+        
+        # fill in the comment info
         if db:
-            for param in parameters_device[2:] + ['spot_size_mm', 'background']:
-                print(param)
-                if param in DB.get_db_config()['comments'][device_ID]:
-                    pass
-                elif param in DB.get_db_config()['devices'][device_ID].keys():
-                    df_info.loc[param] = DB.get_db_config()['devices'][device_ID][param]
-                elif param in DB.get_db_config()['colorimetry'].keys():
-                    df_info.loc[param] = DB.get_db_config()['colorimetry'][param]
-                else:
-                    df_info.loc[param] = 'undefined'
-            
-            for parameter,value in zip(comments_parameters, comments_values):
-                df_info.loc[parameter] = value
+            for comment_key in comment_keys:
+                
+                
+                if comment_key in df_info.index:
+                    df_info.loc[comment_key,'value'] = comment_info[comment_keys.index(comment_key)]
+
+                elif comment_key in df_info.loc['device_params','value'][0].keys():
+                    current_dict = df_info.loc['device_params','value'][0]
+                    current_dict[comment_key] = comment_info[comment_keys.index(comment_key)]
+
+                    df_info.loc['device_params','value'] = [current_dict]
+
         
+        # fill in info about software version
+        df_info.loc['software_version', 'value'] = f'TIDASDAQ3-{df_params.loc["SWVersion","value"]}'
+        
+        # fill in info about lamp
+        lamp_info = df_info.loc['lamp', 'value']
+        if lamp_info in db_rs.get_lamps()['ID'].values:
+            lamp_description = db_rs.get_lamps().query(f'ID == "{lamp_info}"')['description'].values[0]
+            lamp_info = f'{lamp_info}_{lamp_description}'
+            df_info.loc['lamp','value'] = lamp_info
+
+
+        # fill in info about filter
+        filter_info = df_info.loc['filter', 'value']
+        if filter_info in db_rs.get_filters()['ID'].values:
+            filter_description = db_rs.get_filters().query(f'ID == "{filter_info}"')['description'].values[0]
+            filter_info = f'{filter_info}_{filter_description}'
+            df_info.loc['filter','value'] = filter_info
+
+
+        # fill in info about fiber
+        fiber_ill_info = df_info.loc['fiber_ill', 'value']
+        if fiber_ill_info in db_rs.get_fibers()['ID'].values:
+            fiber_ill_description = db_rs.get_fibers().query(f'ID == "{fiber_ill_info}"')['description'].values[0]
+            fiber_ill_info = f'{fiber_ill_info}_{fiber_ill_description}'
+            df_info.loc['fiber_ill','value'] = fiber_ill_info
+
+
+        fiber_coll_info = df_info.loc['fiber_coll', 'value']
+        if fiber_coll_info in db_rs.get_fibers()['ID'].values:
+            fiber_coll_description = db_rs.get_fibers().query(f'ID == "{fiber_coll_info}"')['description'].values[0]
+            fiber_coll_info = f'{fiber_coll_info}_{fiber_coll_description}'
+            df_info.loc['fiber_coll','value'] = fiber_coll_info
+        
+
         
         ####### PROCESS THE SPECTRAL DATA ########
 
@@ -332,17 +656,31 @@ def RS_Tidas(files: list, device_ID:Optional[str] = 'default', db:Optional[bool]
         # whether to interpolate the spectral data
         if interpolation_wl == 'none':
             wanted_wl = df_rawdata.index
+            interpolated_wl = pd.Index(np.arange(np.int32(wanted_wl[0])+1,np.int32(wanted_wl[-1])-1,1), name='wavelength_nm')
 
-        elif isinstance(interpolation_wl, tuple):
+            df_sp = pd.DataFrame(data=sip.interp1d(df_rawdata.index, df_rawdata, axis=0)(wanted_wl),
+                            index=wanted_wl,
+                            columns=df_rawdata.columns).dropna(axis=0)
+            
+            df_sp_interpolated = pd.DataFrame(data=sip.interp1d(df_rawdata.index, df_rawdata, axis=0)(interpolated_wl),
+                            index=interpolated_wl,
+                            columns=df_rawdata.columns)
+            
+            df_sp_interpolated = df_sp_interpolated / 100
+
+        elif isinstance(interpolation_wl, (tuple,list)):
             wanted_wl = pd.Index(np.arange(interpolation_wl[0],interpolation_wl[1],interpolation_wl[2]), name='wavelength_nm')
+
+            df_sp = pd.DataFrame(data=sip.interp1d(df_rawdata.index, df_rawdata, axis=0)(wanted_wl),
+                            index=wanted_wl,
+                            columns=df_rawdata.columns)
+            
+            df_sp_interpolated = df_sp / 100
         
         else:
             print(f"The '{interpolation_wl}' value that you entered is not valid. Enter either 'none' if you don't want any interpolation or a tuple of three values (start_wl, end_wl, step).")
             return
 
-        df_sp = pd.DataFrame(data = sip.interp1d(df_rawdata.index, df_rawdata, axis = 0)(wanted_wl),
-                            index = wanted_wl,
-                            columns = df_rawdata.columns)
         
         # rounding the spectral data
         if rounding_sp == 'none':
@@ -351,15 +689,13 @@ def RS_Tidas(files: list, device_ID:Optional[str] = 'default', db:Optional[bool]
             df_sp = np.round(df_sp/100,rounding_sp)  
         else:
             print(f"The value '{rounding_sp}' you entered is not valid. Please enter a positive integer.")
-            return  
-
-        print(df_sp)  
+            return         
 
 
         ####### CONVERT THE REFLECTANCE VALUES TO COLORIMETRIC VALUES ########
         
-        sd = [colour.SpectralDistribution(x,df_sp.index) for x in df_sp.T.values]                 
-
+        sd = [colour.SpectralDistribution(x,df_sp_interpolated.index) for x in df_sp_interpolated.T.values]
+        
         XYZ = [colour.sd_to_XYZ(x,cmfs,illuminant=illuminant_SDS) for x in sd]        
         xy = [np.round(colour.XYZ_to_xy(x),4) for x in XYZ]        
         Lab = [np.round(colour.XYZ_to_Lab(x/100, illuminant_CCS),3) for x in XYZ]        
@@ -389,7 +725,7 @@ def RS_Tidas(files: list, device_ID:Optional[str] = 'default', db:Optional[bool]
             db_objects = db_objects.reset_index()
             db_projects = db_projects.reset_index()
     
-        # define the output filename
+        # define the output filename        
         if filenaming == 'none':
             filename = stemName
 
@@ -397,14 +733,30 @@ def RS_Tidas(files: list, device_ID:Optional[str] = 'default', db:Optional[bool]
             group = stemName.split('_')[2]
             group_description = stemName.split('_')[3]
             object_type = df_info.loc['object_type']['value']
-            date = pd.to_datetime(date_time).date()
+            date = pd.to_datetime(date_time_analysis).date()
             filename = f'{project_id}_{meas_id}_{group}_{group_description}_{object_type}_{date}'
+
+        elif filenaming == 'default' and db == True:
+            
+            filename_parameters = config_info['filenaming'][device_ID]['interim']
+
+            if 'date' in filename_parameters:
+                new_df_info = df_info.copy()
+                new_df_info.loc['date'] = str(df_info.loc['datetime_analysis']['value'].date())
+
+                filename = "_".join([new_df_info.loc[x]['value'].split("_")[0] if "_" in new_df_info.loc[x]['value'] else new_df_info.loc[x]['value'] for x in filename_parameters])
+
+            else:
+                filename = "_".join([df_info.loc[x]['value'].split("_")[0] if "_" in df_info.loc[x]['value'] else df_info.loc[x]['value'] for x in filename_parameters])
+
+        elif filenaming == 'default' and db == False:
+            filename = stemName
 
         elif isinstance(filenaming, list):
 
             if 'date' in filenaming:
                 new_df_info = df_info.copy()
-                new_df_info.loc['date'] = str(df_info.loc['date_time']['value'].date())                    
+                new_df_info.loc['date'] = str(df_info.loc['datetime_analysis']['value'].date())                    
 
                 filename = "_".join([new_df_info.loc[x]['value'].split("_")[0] if "_" in new_df_info.loc[x]['value'] else new_df_info.loc[x]['value'] for x in filenaming])                    
 
@@ -426,8 +778,6 @@ def RS_Tidas(files: list, device_ID:Optional[str] = 'default', db:Optional[bool]
             [os.remove(file) for file in raw_files]
             
         print(f'{raw_file} has been successfully processed !')
-
-        
 
 
 
