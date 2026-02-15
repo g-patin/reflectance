@@ -9,18 +9,22 @@
       
       
       
+        <link rel="prev" href="../databases-management/">
       
       
-      <link rel="icon" href="/assets/images/favicon.png">
+        <link rel="next" href="../retrieve-test-datasets/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.34">
     
     
       
-        <title>reflectance</title>
+        <title>Rawdata processing - reflectance</title>
       
     
     
-      <link rel="stylesheet" href="/assets/stylesheets/main.35f28582.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.35f28582.min.css">
       
       
 
@@ -39,11 +43,11 @@
       
     
     
-      <link rel="stylesheet" href="/assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="/css/custom.css">
+      <link rel="stylesheet" href="../css/custom.css">
     
-    <script>__md_scope=new URL("/",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -61,6 +65,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#get-raw-files" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -73,7 +82,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="/." title="reflectance" class="md-header__button md-logo" aria-label="reflectance" data-md-component="logo">
+    <a href=".." title="reflectance" class="md-header__button md-logo" aria-label="reflectance" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -93,7 +102,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              
+              Rawdata processing
             
           </span>
         </div>
@@ -168,7 +177,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="/." title="reflectance" class="md-nav__button md-logo" aria-label="reflectance" data-md-component="logo">
+    <a href=".." title="reflectance" class="md-nav__button md-logo" aria-label="reflectance" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -186,7 +195,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -206,7 +215,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/installation/" class="md-nav__link">
+      <a href="../installation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -223,17 +232,19 @@
       
   
   
+    
   
   
+  
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
@@ -247,7 +258,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             Tutorials
@@ -261,7 +272,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/get-started/" class="md-nav__link">
+      <a href="../get-started/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -282,7 +293,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/databases-management/" class="md-nav__link">
+      <a href="../databases-management/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -300,10 +311,28 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="/rawdata-processing/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Rawdata processing
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -312,6 +341,66 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#get-raw-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Get raw files
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      Run function
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Run function">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fotonowy-device" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fotonowy device
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#function-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Function parameters
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -366,7 +455,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/retrieve-test-datasets/" class="md-nav__link">
+      <a href="../retrieve-test-datasets/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -387,7 +476,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/create-databases/" class="md-nav__link">
+      <a href="../create-databases/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -408,7 +497,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/create-RS-class-instance/" class="md-nav__link">
+      <a href="../create-RS-class-instance/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -471,7 +560,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/package-usage/" class="md-nav__link">
+      <a href="../package-usage/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -492,7 +581,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/datafiles/" class="md-nav__link">
+      <a href="../datafiles/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -520,7 +609,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/references/" class="md-nav__link">
+      <a href="../references/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -551,6 +640,56 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#get-raw-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Get raw files
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      Run function
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Run function">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fotonowy-device" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fotonowy device
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#function-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Function parameters
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -561,8 +700,77 @@
             <div class="md-content" data-md-component="content">
               <article class="md-content__inner md-typeset">
                 
-  <h1>404 - Not found</h1>
+                  
 
+
+  <h1>Rawdata processing</h1>
+
+<p>In this section, we will show you how to process raw microfading files into our standard <em>interim</em> files, that is required to use the <code>microfading</code> package.</p>
+<p>The current version of the <code>microfading</code> package can only process raw files obtained with the Fotonowy microfading device. Don't hesitate to contact us to discuss the possibility to process raw files obtained with other microfading systems.</p>
+<p>Processing the rawdata files consists of two main steps:</p>
+<ol>
+<li>Get a list of your raw files</li>
+<li>Run the <code>process_rawdata()</code> function</li>
+</ol>
+<h2 id="get-raw-files">Get raw files<a class="headerlink" href="#get-raw-files" title="Permanent link">&para;</a></h2>
+<p>There are many ways in python to retrieve a list of files. I will only show two ways of doing it.</p>
+<p><strong>Option 1</strong> - Retrieve the files manually</p>
+<p>In this option you create a list by typing the names of the raw files. To ease process, you can start writing the first letter and then press the <code>Tab</code> button to autocomplete the rest of the filename. </p>
+<div class="highlight"><pre><span></span><code><span class="c1"># For example, I created a list of two rawdata files</span>
+<span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Project01_MF.plume01.01_G01_blue_rawdata.txt&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;Project12_MF.S0001.01_G01_paperBlock_rawdata.txt&#39;</span><span class="p">]</span>
+
+<span class="c1"># If the files are located in a different directory than the notebook you are using, then</span>
+<span class="c1"># you will need to give the absolute path of the files       </span>
+<span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;/home/john/Documents/data/Project01_MF.plume01.01_G01_blue_rawdata.txt&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;/home/john/Documents/data/Project12_MF.S01.01_G01_paperBlock_rawdata.txt&#39;</span><span class="p">]</span>
+</code></pre></div>
+<p>&nbsp;</p>
+<p><strong>Option 2</strong> - Retrieve with <code>glob</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">From</span> <span class="n">glob</span> <span class="kn">import</span> <span class="nn">glob</span>
+
+<span class="c1"># Ask glob to retrieve all the files containing the expression *MF* and *rawdata* in their filenames</span>
+<span class="c1"># I also asked to sort the files</span>
+<span class="n">files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;*MF*rawdata*&#39;</span><span class="p">))</span>
+<span class="n">files</span>
+</code></pre></div>
+<div class="output-area">
+<pre>['/home/john/Documents/data/Project01_MF.plume01.01_G01_blue_rawdata.txt',
+'/home/john/Documents/data/Project12_MF.S01.01_G01_paperBlock_rawdata.txt']
+</pre>
+</div>
+
+<h2 id="run-function">Run function<a class="headerlink" href="#run-function" title="Permanent link">&para;</a></h2>
+<p>Once you have a list of rawdata files, you will use it inside the <code>process_rawdata()</code> function as illustrated below. This function has two compulsory arguments (<em>files</em> and <em>device</em>) for which you will need to provide values. You will use the list of rawfiles for the <em>files</em> argument and you will select the adequate microfading device you used (see sub-sections below).</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">microfading</span> <span class="k">as</span> <span class="nn">mf</span>
+
+<span class="c1"># get the raw files (see step above)</span>
+<span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;filename1&#39;</span><span class="p">,</span> <span class="s1">&#39;filename2&#39;</span><span class="p">,</span> <span class="n">etc</span><span class="o">.</span><span class="p">]</span>
+
+<span class="c1"># run the function to process the rawfiles</span>
+<span class="n">mf</span><span class="o">.</span><span class="n">process_rawdata</span><span class="p">(</span><span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;&lt;MFT_device_name&gt;&#39;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="fotonowy-device">Fotonowy device<a class="headerlink" href="#fotonowy-device" title="Permanent link">&para;</a></h3>
+<p>If you used a Fotonowy microfading device to obtain the raw files, then you will enter 'fotonowy' as value for the <em>device</em> argument in the <code>process_rawdata()</code> function (see code below).</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># run the function to process the rawfiles</span>
+<span class="n">mf</span><span class="o">.</span><span class="n">process_rawdata</span><span class="p">(</span><span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;fotonowy&#39;</span><span class="p">)</span>
+</code></pre></div>
+<p>Currently, the Fotonowy device produces 4 raw files for each analysis, thus you will need to enter these 4 files in the list of required raw files. </p>
+<h2 id="function-parameters">Function parameters<a class="headerlink" href="#function-parameters" title="Permanent link">&para;</a></h2>
+<p>The <code>process_rawdata()</code> function contains several parameters. I will let you read the docstrings for detailed information. But I will just focus on two parameters that you might find important to be aware of. </p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
               </article>
             </div>
           
@@ -608,10 +816,10 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "/", "features": ["content.code.copy"], "search": "/assets/javascripts/workers/search.07f07601.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy"], "search": "../assets/javascripts/workers/search.07f07601.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="/assets/javascripts/bundle.56dfad97.min.js"></script>
+      <script src="../assets/javascripts/bundle.56dfad97.min.js"></script>
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       

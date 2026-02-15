@@ -9,18 +9,22 @@
       
       
       
+        <link rel="prev" href="../create-databases/">
       
       
-      <link rel="icon" href="/assets/images/favicon.png">
+        <link rel="next" href="../package-usage/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.34">
     
     
       
-        <title>reflectance</title>
+        <title>Create an RS class instance - reflectance</title>
       
     
     
-      <link rel="stylesheet" href="/assets/stylesheets/main.35f28582.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.35f28582.min.css">
       
       
 
@@ -39,11 +43,11 @@
       
     
     
-      <link rel="stylesheet" href="/assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="/css/custom.css">
+      <link rel="stylesheet" href="../css/custom.css">
     
-    <script>__md_scope=new URL("/",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -61,6 +65,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#1-get-rs-data-files" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -73,7 +82,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="/." title="reflectance" class="md-header__button md-logo" aria-label="reflectance" data-md-component="logo">
+    <a href=".." title="reflectance" class="md-header__button md-logo" aria-label="reflectance" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -93,7 +102,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              
+              Create an RS class instance
             
           </span>
         </div>
@@ -168,7 +177,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="/." title="reflectance" class="md-nav__button md-logo" aria-label="reflectance" data-md-component="logo">
+    <a href=".." title="reflectance" class="md-nav__button md-logo" aria-label="reflectance" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -186,7 +195,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -206,7 +215,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/installation/" class="md-nav__link">
+      <a href="../installation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -261,7 +270,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/get-started/" class="md-nav__link">
+      <a href="../get-started/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -282,7 +291,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/databases-management/" class="md-nav__link">
+      <a href="../databases-management/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -303,7 +312,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/rawdata-processing/" class="md-nav__link">
+      <a href="../rawdata-processing/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -328,17 +337,19 @@
       
   
   
+    
   
   
+  
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
           <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
@@ -352,7 +363,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             How-to-guides
@@ -366,7 +377,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/retrieve-test-datasets/" class="md-nav__link">
+      <a href="../retrieve-test-datasets/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -387,7 +398,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/create-databases/" class="md-nav__link">
+      <a href="../create-databases/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -405,10 +416,28 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="/create-RS-class-instance/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Create an RS class instance
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -417,6 +446,42 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-get-rs-data-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Get RS data files
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-create-rs-class-instance" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Create RS class instance
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -471,7 +536,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/package-usage/" class="md-nav__link">
+      <a href="../package-usage/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -492,7 +557,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/datafiles/" class="md-nav__link">
+      <a href="../datafiles/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -520,7 +585,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/references/" class="md-nav__link">
+      <a href="../references/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -551,6 +616,32 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-get-rs-data-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Get RS data files
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-create-rs-class-instance" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Create RS class instance
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -561,8 +652,43 @@
             <div class="md-content" data-md-component="content">
               <article class="md-content__inner md-typeset">
                 
-  <h1>404 - Not found</h1>
+                  
 
+
+  <h1>Create an RS class instance</h1>
+
+<p>The functions provided by the reflectance package only work on an instance of a reflectance spectroscopy class (RS). The creation of an instance of a reflectance class is a two-steps procedure and is described below:</p>
+<h2 id="1-get-rs-data-files">1. <strong>Get RS data files</strong><a class="headerlink" href="#1-get-rs-data-files" title="Permanent link">&para;</a></h2>
+<p>Retrieve a list of data files on which the functions provided by the class will be applied. The data files need to be constrained to a specific file structure (For more information about it, see the <a href="https://g-patin.github.io/reflectance/datafiles">data files section</a>).</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">reflectance</span> <span class="k">as</span> <span class="nn">rf</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1"># Here we are using the test data, but you should use your own data files</span>
+<span class="n">files</span> <span class="o">=</span> <span class="n">rf</span><span class="o">.</span><span class="n">get_datasets</span><span class="p">()</span>
+</code></pre></div>
+<p>&nbsp;</p>
+<h2 id="2-create-rs-class-instance">2. <strong>Create RS class instance</strong><a class="headerlink" href="#2-create-rs-class-instance" title="Permanent link">&para;</a></h2>
+<p>Create the instance using the files as the main parameter.</p>
+<div class="highlight"><pre><span></span><code><span class="n">rs</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="n">RS</span><span class="p">(</span><span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">)</span>
+<span class="n">rs</span>
+</code></pre></div>
+<div class="output-area">
+<pre>
+Reflectance data class - Number of files = 5
+</pre>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
               </article>
             </div>
           
@@ -608,10 +734,10 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "/", "features": ["content.code.copy"], "search": "/assets/javascripts/workers/search.07f07601.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy"], "search": "../assets/javascripts/workers/search.07f07601.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="/assets/javascripts/bundle.56dfad97.min.js"></script>
+      <script src="../assets/javascripts/bundle.56dfad97.min.js"></script>
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       
