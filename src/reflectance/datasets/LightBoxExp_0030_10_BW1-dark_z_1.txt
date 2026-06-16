@@ -1,0 +1,6 @@
+Data from LightBoxExp_0030_10_BW1-dark_z_1.txt Node
+
+
+Standard Time	Epoch Time	HH:MM:SS:000	(msec 1900)
+	z	y:1006	x:1005	Z:1003	Y:1002	X:1001	<html>C*<sub>ab</sub><b> (chroma)</b></html>:1013	<html>h<sub>ab</sub><b> (hue-angle)</b></html>:1012	b*:1011	a*:1010	L*:1009
+12:10:14.854	1591092614854	0.5264	0.2446	0.2290	42.40	19.70	18.45	30.417	-92.255 degrees	-30.393	-1.197	51.496
