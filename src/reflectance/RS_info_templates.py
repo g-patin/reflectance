@@ -14,8 +14,8 @@ project_info = [
     "start_date",
     "end_date",
     "project_leader",
-    "co_researchers",
-    "keywords",
+    "co-researchers",
+    "keywords",    
 ]
 
 object_info = [
@@ -36,9 +36,12 @@ system_info = [
     "[SYSTEM INFO]",
     "system_id",
     "system_name",
+    "constructor",
     "geometry", 
     "lamp",
+    "spot_size_mm",
     "filter_ill",
+    "filter_coll",
     "fiber_ill",
     "fiber_coll",
     "specular_component",
@@ -51,28 +54,22 @@ device_info = [
     "device_type",
     "brand",
     "model", 
-    "software_version",
-    "lamp",
-    "geometry",
-    "fiber_ill",
-    "fiber_coll", 
-    "filter",   
-    "specular_component",    
+    "software_version",      
     "device_params",            
 ]
 
 analysis_info = [
     "[ANALYSIS INFO]",
     "meas_id",
-    "group",
-    "group_description",
-    "spot_size_mm",
+    "spot_group",
+    "spot_description",    
     "background",        
     "integration_time_ms",
     "average_scans", 
     "smoothing_pixels",      
     "measurements_N",  
-    "white_standard",      
+    "white_standard",
+    "interpolation",      
 ]
 
 colorimetric_info = [
