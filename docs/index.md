@@ -16,7 +16,7 @@ We are welcoming any contributions, comments (positive and negative), ideas, etc
 
 ## What is this package about ?
 
-This package has been created to help reflectance users to manipulate their data. 
+This package has been created to help with the manipulation of reflectance spectroscopic data. 
 
 ## What does this package provide ?
 
@@ -37,12 +37,16 @@ The package provies computational tools to ease the manipulation of reflectance 
 
  The documentation follows the structure described by [Daniele Procida](https://diataxis.fr/), which organizes documentation into four different groups (Tutorials, How-to, Explanations, References).
 
+## Contact
+
+email: microfading@mailo.com
+
 
 ## Cite package
 
 If you are using this package for a publication, please cite the package as follows: 
 
-- Patin, G., 2025, *Reflectance*, Python Package, v.0.1.0, [https://github.com/g-patin/reflectance](https://github.com/g-patin/reflectance)
+- Patin, G., 2025, *Reflectance*, Python Package, v.0.3.0, [https://github.com/g-patin/reflectance](https://github.com/g-patin/reflectance)
 
  
 
