@@ -163,6 +163,7 @@ def CIELAB(data, stds=None, colors=None, fontsize=24, legend_labels=[], title=No
     fig, ax = plt.subplots(2,2, figsize=figure_sizes[legend_position], gridspec_kw=dict(width_ratios=[1, 2], height_ratios=[2, 1]))
     Lb, ab, AB, aL = ax[0, 0], ax[0, 1], ax[1, 0], ax[1, 1]
     
+    """
     # define labels 
     if legend_labels == None:
         legend_labels = ['none'] * len(data)        
@@ -170,7 +171,8 @@ def CIELAB(data, stds=None, colors=None, fontsize=24, legend_labels=[], title=No
         legend_labels = ['none'] * len(data)    
     elif len(legend_labels) == 0:
         legend_labels = ['none'] * len(data)
-        
+    """
+    
     # define std values
     if stds is None:
         stds = [np.zeros(3) for _ in data]   
@@ -212,7 +214,7 @@ def CIELAB(data, stds=None, colors=None, fontsize=24, legend_labels=[], title=No
             
             Lb.errorbar(L, b, yerr=std[2], xerr=std[0], fmt='o', color=color, **kwargs)
             ab.errorbar(a, b, yerr=std[2], xerr=std[1], fmt='o', color=color, **kwargs, label=label)
-            aL.errorbar(a, L, yerr=std[2], xerr=std[0], fmt='o', color=color, **kwargs) 
+            aL.errorbar(a, L, yerr=std[0], xerr=std[1], fmt='o', color=color, **kwargs) 
                         
             AB.imshow(im_colour_circle, extent=(-110,110,-110,110))  
             AB.scatter(a,b, color='0.5', marker='o') 
