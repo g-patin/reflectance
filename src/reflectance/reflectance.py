@@ -91,7 +91,7 @@ def get_datasets(device:Optional[str] = 'KM', rawfiles:Optional[bool] = False, s
     device : Optional[str], optional
         Device that has been used to obtain the files, by default 'KM'
         One can choose a single option among the following choices: 'Avt', 'KM', 'OO', 'Tidas' 
-        'Avt' corresponds to the Avantes spectrometer ....
+        'AVT' corresponds to the Avantes spectrometer ....
         'KM' corresponds Konica Minolta photospectrometer CM-2600d.
         'OO' corresponds to the Ocean Optics spectrometer ....
         'Tidas' corresponds to the .....
@@ -109,68 +109,82 @@ def get_datasets(device:Optional[str] = 'KM', rawfiles:Optional[bool] = False, s
         It returns a list of strings, where each string corresponds the absolute path of a txt file. Subsequently, one can use the list as input for the RS class. 
     """
 
-    # Whether to select files with standard deviation values
-    if stdev:
-        if device == 'sMFT':
-            data_files = [
-                '2024-144_MF.BWS0024.G02_avg_BW1_model_2024-08-02_MFT1.xlsx',
-                '2024-144_MF.BWS0025.G02_avg_BW2_model_2024-08-02_MFT1.xlsx',
-                '2024-144_MF.BWS0026.G02_avg_BW3_model_2024-08-02_MFT1.xlsx',                
-            ]
+    devices = ['AVT','KM', 'OO', 'Tidas']
+    if device not in devices:
+        print(f'The device values you entered ({device}) is not valid. Please enter a device value from the list : {devices}.')
+        return
 
-        elif device == 'fotonowy':
-            data_files = [
-                '2024-144_MF.BWS0024.G01_avg_BW1_model_2024-07-30_MFT2.xlsx',
-                '2024-144_MF.BWS0025.G01_avg_BW2_model_2024-08-02_MFT2.xlsx',
-                '2024-144_MF.BWS0026.G01_avg_BW3_model_2024-08-07_MFT2.xlsx',
-                '2024-144_MF.dayflower4.G01_avg_0h_model_2024-07-30_MFT2.xlsx',
-                '2024-144_MF.indigo3.G01_avg_0h_model_2024-08-02_MFT2.xlsx',
-            ]
-        
-    else:
-        if device == 'sMFT':
-            data_files = [
-                '2024-144_MF.BWS0026.04_G02_BW3_model_2024-08-02_MFT1.xlsx',
-                '2024-144_MF.BWS0025.04_G02_BW2_model_2024-08-02_MFT1.xlsx',
-                '2024-144_MF.BWS0024.04_G02_BW1_model_2024-08-02_MFT1.xlsx',
-                '2024-144_MF.yellowwood.01_G01_yellow_model_2024-08-01_MFT1.xlsx',
-                '2024-144_MF.vermillon.01_G01_red_model_2024-07-31_MFT1.xlsx',
-            ]
 
-        elif device == 'fotonowy':
-            data_files = [
-                '2024-144_MF.BWS0024.01_G01_BW1_model_2024-07-30_MFT2.xlsx',
-                '2024-144_MF.BWS0025.01_G01_BW2_model_2024-08-02_MFT2.xlsx',
-                '2024-144_MF.BWS0026.01_G01_BW3_model_2024-08-07_MFT2.xlsx',
-                '2024-144_MF.vermillon3.01_G01_0h_sample_2024-07-31_MFT2.xlsx',
-                '2024-144_MF.yellowwood4.01_G01_0h_model_2024-08-01_MFT2.xlsx',
-            ]
- 
     # Whether to select rawfiles according to a choosen device
     if rawfiles:
-        if device == 'sMFT':
+        if device == 'AVT':
+            data_files = ['2023-103_2751MK_01_G01_edge_2024-06-04.txt']
+
+        elif device == 'KM':
             data_files = [
-                '2024-144_BWS0024_04_G02_BW1_c01_000001.txt',
-                '2024-144_yellowwood_01_G01_yellow_c01_000001.txt',
+                '2024-03-26_noProject_GreyScales_SNV195805.txt',                
+            ] 
+
+        elif device == 'OO':
+            data_files = [
+                'LightBoxExp_0030_10_BW1-dark_Reflection_1.txt',
+                'LightBoxExp_0030_10_BW1-dark_z_1.txt'
+            ]   
+
+        elif device == 'Tidas':
+            data_files = [
+                '2024-144_dayflower4_01_G01_0h_c01_000001.txt'
             ]
 
-        elif device == 'fotonowy':
-            data_files = [
-                '2024-8200 P-001 G01 uncleaned_01-spect_convert.txt',
-                '2024-8200 P-001 G01 uncleaned_01-spect.txt',
-                '2024-8200 P-001 G01 uncleaned_01.txt',
-                '2024-8200 P-001 G01 uncleaned_01.rfc',
-                '2024-144 BWS0024 G01 BW1_01-spect_convert.txt',
-                '2024-144 BWS0024 G01 BW1_01-spect.txt',
-                '2024-144 BWS0024 G01 BW1_01.txt',
-                '2024-144 BWS0024 G01 BW1_01.rfc',
-            ]    
+
+    else:    
+        # Whether to select files with standard deviation values
+        if stdev:
+            if device == 'AVT':
+                data_files = [
+                    ''              
+                ]
+
+            elif device == 'KM':
+                data_files = [
+                    ''
+                ]
+
+            elif device == 'OO':
+                data_files = [
+                    ''
+                ]
+            
+            elif device == 'Tidas':
+                data_files = [
+                    ''
+                ]
+            
+        else:
+            if device == 'AVT':
+                data_files = [
+                    '2023-103_RS.2751MK.01_G01_edge_heritage_Shirley-Temple_2024-06-04_SP04.xlsx',
+                ]
+
+            elif device == 'KM':
+                data_files = [
+                    '',                
+                ]
+
+            elif device == 'OO':
+                data_files = [
+                    '',
+                ]
+            
+            elif device == 'Tidas':
+                data_files = ['2024-144_RS.cochineal1.01_G01_35h_print_2024-10-08_SP03.xlsx']
+   
 
     # Get the paths to the data files within the package
     file_paths = []
     for file_name in data_files:
         
-        with pkg_resources.path('microfading.datasets', file_name) as data_file:
+        with pkg_resources.path('reflectance.datasets', file_name) as data_file:
              file_paths.append(data_file)
 
 
@@ -226,11 +240,33 @@ def get_colorimetry_info():
 def get_institution_info():
     """Retrieve the information about the institution of the users.  
     """
-    return config.get_institution_info
+    return config.get_institution_info()
 
 
-def process_rawdata(files: list, device: str, filenaming:Optional[str] = 'default', folder:Optional[str] = '.', db:Optional[bool] = 'default', comment:Optional[str] = '', interpolation_wl:Optional[tuple] = 'default', rounding_sp:Optional[int] = 4, authors:Optional[str] = 'XX', white_standard:Optional[str] = 'default', observer:Optional[str] = 'default', illuminant:Optional[str] = 'default', delete_files:Optional[bool] = False, return_data:Optional[bool] = True):
-    """Process the reflectance spectroscopy raw files created by the software that performed the analysis. 
+def process_rawdata(
+    files: list, 
+    device: str, 
+    filenaming:Optional[str] = 'default', 
+    folder:Optional[str] = '.', 
+    db:Optional[bool] = 'default', 
+    preconfig:Optional[bool] = 'default', 
+    comment:Optional[str] = '', 
+    splice_correction:Union[tuple, str] = ([1000,1800], 10),
+    interpolation_wl:Optional[tuple] = 'default', 
+    rounding:Union[int, tuple, str] = (4,4), 
+    authors:Optional[str] = 'XX', 
+    organization:Optional[str] = 'XX',
+    white_standard:Optional[str] = 'default',
+    average:Optional[int] = 'unknown', 
+    observer:Optional[str] = 'default', 
+    background:Optional[str] = 'unknown',
+    spot_size:Optional[float] = 'unknown',
+    illuminant:Optional[str] = 'default', 
+    output_format:Optional[str] = 'xlsx',
+    delete_files:Optional[bool] = False, 
+    return_data:Optional[bool] = False
+    ):
+    """Process reflectance spectroscopy raw files. 
 
     Parameters
     ----------
@@ -256,27 +292,45 @@ def process_rawdata(files: list, device: str, filenaming:Optional[str] = 'defaul
     
     comment : str, optional
         Whether to include a comment in the final excel file, by default ''
+
+    interpolation_wl : tuple, optional
+
+    rounding : Union[int, tuple, str], optional
+        Rounding the spectral and colorimetric values, by default (4,3)
+        The integers correspond to the amount of digits after the decimal separator.
+        When an integer is provided, it is applied to both the spectral and colorimetric values.
+        When a tuple is provided, the first value relates to the spectral values while the second relates to the colorimetric values.
     
     authors : str, optional
         Initials of the persons that performed and processed the measurements, by default 'XX' (unknown).
         Make sure that you registered the persons in the persons.txt file (see function 'add_new_person').
-        If there are several persons, use a dash to connect the initials (e.g: 'JD-MG-OL').       
+        If there are several persons, use a dash to connect the initials (e.g: 'JD-MG-OL'). 
+
+    organization : str, optional
+        Name of the institution whithin which the measurements have been performed, by default 'XX' (unknown).      
 
     observer : str, optional
         Reference CIE *observer* in degree ('10deg' or '2deg'). by default 'default'.
-        When 'default', it fetches the observer value recorded in the db_config.json file of the package. If no value has been recorded, then it sets the observer value to '10deg'. 
+        When 'default', it fetches the observer value recorded in the db_config.json file of the package. If no value has been recorded, then it sets the observer value to '10deg'.     
 
     illuminant : (str, optional)  
         Reference CIE *illuminant*. It can be any value of the following list: ['A', 'B', 'C', 'D50', 'D55', 'D60', 'D65', 'D75', 'E', 'FL1', 'FL2', 'FL3', 'FL4', 'FL5', 'FL6', 'FL7', 'FL8', 'FL9', 'FL10', 'FL11', 'FL12', 'FL3.1', 'FL3.2', 'FL3.3', 'FL3.4', 'FL3.5', 'FL3.6', 'FL3.7', 'FL3.8', 'FL3.9', 'FL3.10', 'FL3.11', 'FL3.12', 'FL3.13', 'FL3.14', 'FL3.15', 'HP1', 'HP2', 'HP3', 'HP4', 'HP5', 'LED-B1', 'LED-B2', 'LED-B3', 'LED-B4', 'LED-B5', 'LED-BH1', 'LED-RGB1', 'LED-V1', 'LED-V2', 'ID65', 'ID50']. by default 'default'.
         When 'default', it fetches the illuminant value recorded in the db_config.json file of the package. If no value has been recorded, then it sets the illuminant value to 'D65'.      
 
+    output_format : str, optional
+        Output file format for the interim files, by default 'xlsx'.
+        By default, the interim files will be saved as '.xlxs' (excel). When 'ods', it will save the output files as '.ods', which is the open source version of excel.
+      
     delete_files : bool, optional
         Whether to delete the raw files
+
+    return_data : bool, optional
+        Whether to return the processed data
 
     Returns
     -------
     Excel file
-        It returns an excel file composed of three tabs (info, CIELAB, spectra).
+        It returns an excel or an opendocument file composed of three tabs (info, CIELAB, spectra).
     """
 
     # Load the databases function and config file    
@@ -313,20 +367,24 @@ def process_rawdata(files: list, device: str, filenaming:Optional[str] = 'defaul
     
     # Set the authors names
     authors = utils.get_authors(authors, db)
+
     
+    # Set the organization info
+    organization = utils.get_institution(organization, db)
+        
 
     # Set the wavelengths interpolation behaviour
     if interpolation_wl == 'default' and db == False:
-        interpolation_wl = 'none'
+        interpolation_wl = 'standard'
 
     elif interpolation_wl == 'default' and db == True:
         interpolation_wl = config.get_config_info()['devices'][device]['interpolation']
         
     
     # Retrieve the defined process function
-    if device in ['ASD', 'Avt','KM', 'OO', 'Tidas']:
-        process_functions = {'ASD':'RS_ASD', 'Avt':'RS_Avt','KM':'RS_KM', 'OO':'RS_OO', 'Tidas':'RS_Tidas'}
-        process_function = process_functions[device]
+    if device.lower() in ['asd', 'avt', 'avantes', 'km', 'oo', 'tidas']:
+        process_functions = {'asd':'RS_ASD', 'avt':'RS_Avt', 'avantes':'RS_Avt', 'km':'RS_KM', 'oo':'RS_OO', 'tidas':'RS_Tidas'}
+        process_function = process_functions[device.lower()]
 
     elif device in config_info['devices'].keys():                     
         process_function = config_info['devices'][device]['process_function']
@@ -340,13 +398,71 @@ def process_rawdata(files: list, device: str, filenaming:Optional[str] = 'defaul
     # Run the process_rawfiles function according to the microfading device
     if process_function == 'RS_Tidas':        
         
-        return process_rawfiles.RS_Tidas(files=files, filenaming=filenaming, folder=folder, db=db, comment=comment, device_ID=device, interpolation_wl=interpolation_wl, rounding_sp=rounding_sp, authors=authors, white_standard=white_standard, observer=observer, illuminant=illuminant, delete_files=delete_files, return_filename=return_data)
+        return process_rawfiles.RS_Tidas(
+            files=files, 
+            filenaming=filenaming, 
+            folder=folder, 
+            db=db, 
+            comment=comment,
+            device_ID=device, 
+            interpolation_wl=interpolation_wl, 
+            rounding=rounding, 
+            authors=authors, 
+            white_standard=white_standard, 
+            observer=observer, 
+            illuminant=illuminant, 
+            delete_files=delete_files, 
+            return_filename=return_data)
     
 
-    if process_function == 'RS_Avt':        
+    elif process_function == 'RS_Avt':        
         
-        return process_rawfiles.RS_Avt(files=files, filenaming=filenaming, folder=folder, db=db, comment=comment, device_ID=device, interpolation_wl=interpolation_wl, rounding_sp=rounding_sp, authors=authors, white_standard=white_standard, observer=observer, illuminant=illuminant, delete_files=delete_files, return_data=return_data)
+        return process_rawfiles.RS_Avt(
+            files=files, 
+            device_ID=device,
+            db=db,
+            preconfig=preconfig,
+            interpolation_wl=interpolation_wl, 
+            filenaming=filenaming, 
+            folder=folder,            
+            comment=comment,         
+            rounding=rounding, 
+            authors=authors, 
+            organization=organization,
+            white_standard=white_standard,
+            background=background,
+            spot_size=spot_size,
+            observer=observer, 
+            illuminant=illuminant, 
+            delete_files=delete_files, 
+            return_data=return_data)
+    
+    elif process_function == 'RS_ASD':
 
+        return process_rawfiles.RS_ASD(
+            raw_files=files, 
+            filenaming=filenaming, 
+            folder=folder, 
+            db=db, 
+            comment=comment, 
+            splice_correction=splice_correction,
+            device_ID=device, 
+            interpolation_wl=interpolation_wl, 
+            average=average,
+            rounding=rounding, 
+            authors=authors,
+            background=background, 
+            white_standard=white_standard, 
+            observer=observer, 
+            illuminant=illuminant, 
+            delete_files=delete_files, 
+            return_filename=return_data)
+
+
+def remove_comments_info():
+    """Remove the comments information of a desired device from the config_info.json file.  
+    """
+    return config.remove_comments_info()
 
 
 def remove_devices_info():
@@ -354,6 +470,17 @@ def remove_devices_info():
     """
     return config.remove_devices_info()
     
+
+def remove_institution_info():
+    """Remove the institution information from the config_info.json file.  
+    """
+    return config.remove_institution_info()
+
+
+def remove_systems_info():
+    """Remove the information of a desired system from the config_info.json file.  
+    """
+    return config.remove_systems_info()
 
 
 def reset_config():
@@ -383,7 +510,7 @@ def set_comments_info():
     """Record the comments order in the db_config.json file of the reflectance package. 
     It is only relevant if the software of the device has a "comment" entry where you can insert information.
     """
-    return config.set_comment_info()
+    return config.set_comments_info()
 
 
 def set_DB(folder_path:Optional[str] = '', use:Optional[bool] = True):
@@ -411,9 +538,15 @@ def set_filenaming_raw():
 
 
 def set_institution_info():
-    """Set the institution information in the config_info.json file.
+    """Record the institution information in the config_info.json file.
     """
     return config.set_institution_info()
+
+
+def set_systems_info():
+    """Record the information about measurement systems used to perform the reflectance measurements.
+    """
+    return config.set_systems_info()
 
 
 
@@ -451,7 +584,7 @@ class RS(object):
        
         spectral_mode : string, optional
             When 'R' or 'r', it returns the reflectance spectra
-            When 'A' or 'a, it returns the absorption spectra using the following equation: A = -log(R)
+            When 'DR' or 'dr, it returns the density reflection using the following equation: DR = -log(R)
 
         smoothing : tuple of two integers, optional
             Whether to smooth the reflectance data using the Savitzky-Golay filter from the Scipy package, by default (1,0)
@@ -608,7 +741,7 @@ class RS(object):
         return files
           
   
-    def get_metadata(self, labels:Optional[list] = 'all'):
+    def get_metadata(self, labels:Optional[list] = 'all', section:Optional[str] = 'all'):
         """Retrieve the metadata.
 
         Parameters
@@ -618,12 +751,17 @@ class RS(object):
             The metadata labels can be found in the 'info' sheet of the excel files.
             When 'all', it returns all the metadata
 
+        section : Optional[str], optional
+            Retrieve metadata from one of the following sections: 'project', 'object', 'device', 'analysis', 'system', 'colorimetric'.
+            For example, if you want to retrieve all the information about the objects, you can enter 'object' as a value.
+
         Returns
         -------
         pandas dataframe
             It returns the metadata inside a pandas dataframe where each column corresponds to a single file.
         """
         
+        '''
         df = self.read_files()
         metadata = [x[0] for x in df]
 
@@ -640,11 +778,45 @@ class RS(object):
         
         else:            
             return df_metadata.loc[labels]
+        '''
+
+
+        
+        
+        df = self.read_files()
+        metadata = [x[0] for x in df]
+
+        sections = ['project', 'object', 'system', 'device', 'analysis', 'colorimetric']
+        df_metadata = pd.DataFrame(index = metadata[0].set_index('parameter').index)
+
+        for m in metadata:
+            m = m.set_index('parameter')
+            Id = m.loc['meas_id']['value']
+            
+            df_metadata[Id] = m['value']
+
+        
+        if section in sections:
+
+            if section == 'colorimetric':                
+                df_metadata = df_metadata.loc[f'[COLORIMETRIC INFO]':]
+
+            else:
+                end_label = f'[{sections[sections.index(section) + 1].upper()} INFO]'
+                df_metadata = df_metadata.loc[f'[{section.upper()} INFO]':end_label].iloc[:-1,:]
+
+            return df_metadata
+        
+        elif labels != 'all' and isinstance(labels, (str,list)):
+            return df_metadata.loc[labels] 
+                
+        else: 
+            return df_metadata 
        
 
-    def get_Lab(self, illuminant:Optional[str] = 'default', observer:Optional[str] = 'default'):
+    def compute_Lab(self, illuminant:Optional[str] = 'default', observer:Optional[str] = 'default'):
         """
-        Retrieve the CIE L*a*b* values.
+        Compute the CIE L*a*b* values.
 
         Parameters
         ----------
@@ -695,7 +867,7 @@ class RS(object):
         meas_ids = self.get_meas_ids               
         df_sp = self.get_spectra() 
 
-        cols_to_keep = df_sp.columns[df_sp.columns.get_level_values(1).isin(['value', 'mean'])] 
+        cols_to_keep = df_sp.columns[df_sp.columns.get_level_values(1).isin(['nominal', 'mean'])] 
         df_sp_nominal = df_sp[cols_to_keep]
 
         df_Lab = []
@@ -830,7 +1002,7 @@ class RS(object):
         return mcdm
 
     
-    def compute_mean(self, return_data:Optional[bool] = True, criterion:Optional[str] = 'group', save:Optional[bool] = False, folder:Optional[str] = '.', filename:Optional[str] = 'default'):
+    def compute_mean(self, return_data:Optional[bool] = True, criterion:Optional[str] = 'spot_group', save:Optional[bool] = False, folder:Optional[str] = '.', filename:Optional[str] = 'default', rounding:Optional[tuple] = (4,4)):
         """Compute mean and standard deviation values of several microfading measurements.
 
         Parameters
@@ -839,7 +1011,7 @@ class RS(object):
             Whether to return the data, by default True        
 
         criterion : Optional[str], optional
-            _description_, by default 'group'            
+            _description_, by default 'spot_group'            
 
         save : Optional[bool], optional
             Whether to save the average data as an excel file, by default False
@@ -855,6 +1027,9 @@ class RS(object):
             When 'default', it will use the filename of the first input file
             One can also enter a filename, but without a filename extension.
 
+        rounding : Optional[tuple], optional
+            Number of decimal digits (colorimetric values, spectral values)
+
         Returns
         -------
         tuple, excel file
@@ -864,7 +1039,7 @@ class RS(object):
         ------
         RuntimeError
             _description_
-        """
+        """       
 
         if len(self.files) < 2:        
             raise RuntimeError('Not enough files. At least two measurement files are required to compute the average values.')
@@ -884,10 +1059,10 @@ class RS(object):
                 nan_arrays[i][:arr.shape[0], :arr.shape[1]] = arr
                     
             # Calculate mean
-            mean_array = np.nanmean(np.stack(nan_arrays), axis=0)
+            mean_array = np.nanmean(np.stack(nan_arrays), axis=1)
 
             # Calculate std
-            std_array = np.nanstd(np.stack(nan_arrays), axis=0)
+            std_array = np.nanstd(np.stack(nan_arrays), axis=1)
                     
             return mean_array, std_array
         
@@ -898,67 +1073,88 @@ class RS(object):
             except ValueError:
                 return x
 
+        
+        data_info = self.get_metadata().fillna(' ')        
+
+        # Select the first column as a template
+        df_info = data_info.iloc[:,0]
+
+
+        criterion_value = df_info.loc[criterion]
+        object_id = df_info.loc['object_id']
+
+        if criterion == 'spot_group':
+            meas_id = f'RS.{object_id}.{criterion_value}'            
+            df_info.loc['meas_id'] = meas_id
+        elif criterion == 'object' or criterion == 'project':
+            meas_id = f'MF.{criterion_value}'
+            df_info.loc['meas_id'] = meas_id
+        else:
+            print('Choose one of the following options for the criterion parameter: ["spot_group", "object", "project"]')
+
 
         ###### SPECTRAL DATA #######
 
-        data_sp = self.get_spectra()        
+        data_sp = self.get_spectra().T.values        
 
         # Average the spectral data
-        sp = mean_std_with_nan(data_sp)
-        sp_mean = sp[0]
-        sp_std = sp[1]
+
+        sp = mean_std_with_nan([data_sp])
+        sp_mean = np.round(sp[0][0], rounding[1])
+        sp_std = np.round(sp[1][0], rounding[1])
               
         
         # Retrieve the wavelength range
         wl = self.get_wavelength.iloc[:,0].values
         
-        Id = 'meas_ID'
+        
         # Create a multi-index pandas DataFrame
-        header_tuples = [(Id, 'mean'),(Id,'std')]
-        multiindex_cols = pd.MultiIndex.from_tuples(header_tuples, names=['meas_id', 'value'])
+        header_tuples = [(meas_id, 'mean'),(meas_id,'std')]
+        multiindex_cols = pd.MultiIndex.from_tuples(header_tuples, names=['meas_id', 'data_type'])
         
         data_df_sp = np.empty((len(wl), 2))       
-        data_df_sp[:, 0::2] = sp_mean
-        data_df_sp[:, 1::2] = sp_std
+        data_df_sp[:, 0::2] = np.array([sp_mean]).T
+        data_df_sp[:, 1::2] = np.array([sp_std]).T
         df_sp_final = pd.DataFrame(data_df_sp,columns=multiindex_cols, index=wl)
         df_sp_final.index.name = 'wavelength_nm'
             
+        
            
         ###### COLORIMETRIC DATA #######
 
         data_cl = self.get_cielab()        
-        index_cl = data_cl[0].index
+        index_cl = data_cl.index
 
         # Average the colorimetric data    
-        cl = mean_std_with_nan(data_cl)
-        cl_mean = cl[0]
-        cl_std = cl[1]
+        cl = mean_std_with_nan([data_cl.T.values])
+        cl_mean = np.round(cl[0][0],rounding[0])
+        cl_std = np.round(cl[1][0],rounding[0])
 
         # Create a multi-index pandas DataFrame
-        cl_tuples = [(Id, 'mean'),(Id,'std')]
-        multiindex_cols = pd.MultiIndex.from_tuples(cl_tuples, names=['meas_id', 'stats'])
+        cl_tuples = [(meas_id, 'mean'),(meas_id,'std')]
+        multiindex_cols = pd.MultiIndex.from_tuples(cl_tuples, names=['meas_id', 'data_type'])
         
-        data_df_cl = np.empty((cl_mean.shape[0], cl_mean.shape[1] * 2))       
-        data_df_cl[:, 0::2] = cl_mean
-        data_df_cl[:, 1::2] = cl_std
+        data_df_cl = np.empty((cl_mean.shape[0], 2))       
+        data_df_cl[:, 0::2] = np.array([cl_mean]).T
+        data_df_cl[:, 1::2] = np.array([cl_std]).T
         df_cl_final = pd.DataFrame(data_df_cl,columns=multiindex_cols, index=index_cl)
         df_cl_final.index.name = 'coordinates'
-        
+                
         
         ###### INFO #######
 
-        data_info = self.get_metadata().fillna(' ')
+                
 
-        # Select the first column as a template
-        df_info = data_info.iloc[:,0]
+        # Rename measurement type info
+        df_info.loc['measurement_type'] = '[MEAN REFLECTANCE MEASUREMENT]'
         
 
-        # Rename title file
-        df_info.rename({'[SINGLE REFLECTANCE MEASUREMENT]': '[MEAN REFLECTANCE MEASUREMENT]'}, inplace=True)
-
         # Date time
-        most_recent_dt = max(data_info.loc['date_time'])
-        df_info.loc['date_time'] = most_recent_dt
+        most_recent_dt = max(data_info.loc['datetime_analysis'])
+        df_info.loc['datetime_analysis'] = most_recent_dt
+
+        most_recent_dt_processing = max(data_info.loc['datetime_processing'])
+        df_info.loc['datetime_processing'] = most_recent_dt_processing
         
         # Project data info
         df_info.loc['project_id'] = '_'.join(sorted(set(data_info.loc['project_id'].values)))
@@ -980,27 +1176,33 @@ class RS(object):
         df_info.loc['object_name'] = '_'.join(sorted(set(data_info.loc['object_name'].values)))
         df_info.loc['object_creator'] = '_'.join(sorted(set(data_info.loc['object_creator'].values)))
         df_info.loc['object_date'] = '_'.join(sorted(set(data_info.loc['object_date'].values)))
-        df_info.loc['object_support'] = '_'.join(sorted(set(data_info.loc['object_support'].values)))
+        df_info.loc['object_owner'] = '_'.join(sorted(set(data_info.loc['object_owner'].values)))
+        df_info.loc['object_material'] = '_'.join(sorted(set(data_info.loc['object_material'].values)))
+        df_info.loc['support'] = '_'.join(sorted(set(data_info.loc['support'].values)))
         df_info.loc['color'] = '_'.join(sorted(set(data_info.loc['color'].values)))
-        df_info.loc['colorants'] = '_'.join(sorted(set(data_info.loc['colorants'].values)))
+        df_info.loc['colorants_id'] = '_'.join(sorted(set(data_info.loc['colorants_id'].values)))
         df_info.loc['colorants_name'] = '_'.join(sorted(set(data_info.loc['colorants_name'].values)))
         df_info.loc['binding'] = '_'.join(sorted(set(data_info.loc['binding'].values)))
         df_info.loc['ratio'] = '_'.join(sorted(set(data_info.loc['ratio'].values)))
         df_info.loc['thickness_um'] = '_'.join(sorted(set(data_info.loc['thickness_um'].values)))
         df_info.loc['status'] = '_'.join(sorted(set(data_info.loc['status'].values)))
+        df_info.loc['object_comment'] = '_'.join(sorted(set(data_info.loc['object_comment'].values)))
 
         # Device data info
-        if len(set(data_info.loc['device_ID'].values)) > 1:
-            df_info.loc['device_ID'] = '_'.join(sorted(set([x.split('_')[0] for x in data_info.loc['device_ID'].values])))
+        if len(set(data_info.loc['device_id'].values)) > 1:
+            df_info.loc['device_id'] = '_'.join(sorted(set([x.split('_')[0] for x in data_info.loc['device_id'].values])))
         
+        df_info.loc['device_type'] = '_'.join(sorted(set(data_info.loc['device_type'].values)))
         df_info.loc['model'] = '_'.join(sorted(set(data_info.loc['model'].values)))
         df_info.loc['brand'] = '_'.join(sorted(set(data_info.loc['brand'].values)))
-        df_info.loc['measurement_mode'] = '_'.join(sorted(set(data_info.loc['measurement_mode'].values)))
-        df_info.loc['zoom'] = '_'.join(sorted(set(data_info.loc['zoom'].values)))
-        df_info.loc['iris'] = '_'.join(sorted(set(str(data_info.loc['iris'].values))))
+        df_info.loc['software_version'] = '_'.join(sorted(set(data_info.loc['software_version'].values)))
+        #df_info.loc['measurement_mode'] = '_'.join(sorted(set(data_info.loc['measurement_mode'].values)))
+        #df_info.loc['zoom'] = '_'.join(sorted(set(data_info.loc['zoom'].values)))
+        #df_info.loc['iris'] = '_'.join(sorted(set(str(data_info.loc['iris'].values))))
         df_info.loc['geometry'] = '_'.join(sorted(set(data_info.loc['geometry'].values)))
-        df_info.loc['distance_ill_mm'] = '_'.join(sorted(set(str(data_info.loc['distance_ill_mm'].values))))
-        df_info.loc['distance_coll_mm'] = '_'.join(sorted(set(str(data_info.loc['distance_coll_mm'].values))))       
+        df_info.loc['device_params'] = '_'.join(sorted(set(data_info.loc['device_params'].values)))
+        #df_info.loc['distance_ill_mm'] = '_'.join(sorted(set(str(data_info.loc['distance_ill_mm'].values))))
+        #df_info.loc['distance_coll_mm'] = '_'.join(sorted(set(str(data_info.loc['distance_coll_mm'].values))))       
 
         
         if len(set(data_info.loc['fiber_ill'].values)) > 1:
@@ -1017,35 +1219,39 @@ class RS(object):
         if len(set(data_info.loc['filter_ill'].values)) > 1:
             df_info.loc['filter_ill'] = '_'.join(sorted(set([x.split('_')[0] for x in data_info.loc['filter_ill'].values])))
 
-        if len(set(data_info.loc['white_reference'].values)) > 1:
-            df_info.loc['white_reference'] = '_'.join(sorted(set([x.split('_')[0] for x in data_info.loc['white_reference'].values])))
+        if len(set(data_info.loc['filter_coll'].values)) > 1:
+            df_info.loc['filter_coll'] = '_'.join(sorted(set([x.split('_')[0] for x in data_info.loc['filter_coll'].values])))
+
+        if len(set(data_info.loc['white_standard'].values)) > 1:
+            df_info.loc['white_standard'] = '_'.join(sorted(set([x.split('_')[0] for x in data_info.loc['white_standard'].values])))
         
 
         # Analysis data info
         
-        criterion_value = df_info.loc[criterion]
-        object_id = df_info.loc['object_id']
-        if criterion == 'group':            
-            df_info.loc['meas_id'] = f'MF.{object_id}.{criterion_value}'
-        elif criterion == 'object' or criterion == 'project':
-             df_info.loc['meas_id'] = f'MF.{criterion_value}'
-        else:
-            print('Choose one of the following options for the criterion parameter: ["group", "object", "project"]')
-
+        
         meas_nbs = '-'.join([x.split('.')[-1] for x in self.get_meas_ids])
-        df_info.loc['group'] = f'{"-".join(sorted(set(data_info.loc["group"].values)))}_{meas_nbs}'    
-        df_info.loc['group_description'] = '_'.join(sorted(set(data_info.loc['group_description'].values)))
+        df_info.loc['spot_group'] = f'{"-".join(sorted(set(data_info.loc["spot_group"].values)))}_{meas_nbs}'    
+        df_info.loc['spot_description'] = '_'.join(sorted(set(data_info.loc['spot_description'].values)))
         df_info.loc['background'] = '_'.join(sorted(set(data_info.loc['background'].values)))  
 
         if len(set(data_info.loc['specular_component'].values)) > 1:
             df_info.loc['specular_component'] = '_'.join(sorted(set([x.split('_')[0] for x in data_info.loc['specular_component'].values]))) 
 
+        value_intTime = list(self.get_metadata('integration_time_ms').unique())     
+        if len(value_intTime) == 1:            
+            value_intTime = float(value_intTime[0])
         
-        df_info.loc['integration_time_ms'] = np.round(np.mean(data_info.loc['integration_time_ms'].astype(float).values),1)
-        df_info.loc['average'] = '_'.join([str(x) for x in sorted(set(data_info.loc['average'].astype(str).values))])         
-        df_info.loc['measurements_N'] = '_'.join([str(x) for x in sorted(set(data_info.loc['measurements_N'].astype(str).values))])
+        value_avgScans = list(self.get_metadata('average_scans').unique())     
+        if len(value_avgScans) == 1:            
+            value_avgScans = int(value_avgScans[0])
+
+        
+        df_info.loc['integration_time_ms'] = value_intTime
+        df_info.loc['average_scans'] = value_avgScans
+        df_info.loc['measurements_N'] = len(data_sp)
         df_info.loc['illuminant'] = '_'.join(sorted(set(data_info.loc['illuminant'].values)))
         df_info.loc['observer'] = '_'.join(sorted(set(data_info.loc['observer'].values)))
+        df_info.loc['interpolation'] = '_'.join(sorted(set(data_info.loc['interpolation'].values)))
                   
         
         # Rename the column
@@ -1070,6 +1276,14 @@ class RS(object):
             # set the filename
             if filename == 'default':
                 filename = f'{Path(self.files[0]).stem}_MEAN{Path(self.files[0]).suffix}'
+
+            elif isinstance(filename, list):
+                filename_values = [df_info.loc[x] if x != 'date' else str(df_info.loc['datetime_analysis']).split(' ')[0] for x in filename]
+
+                filename = [x if x !='[MEAN REFLECTANCE MEASUREMENT]' else 'avg' for x in filename_values]
+                filename = [x.split('_')[0] if '_' in x else x for x in filename]
+                filename = '_'.join(filename)
+                filename = f'{filename}.xlsx'
 
             else:
                 filename = f'{filename}.xlsx'
@@ -1162,7 +1376,7 @@ class RS(object):
                 else:
                     data_std.append(np.zeros(len(data.values)))
                 
-            if data.name[1] == 'value':
+            if data.name[1] == 'nominal':
                 data_mean.append(data.values)
                 data_std.append(np.zeros(len(data.values))) 
 
@@ -1185,10 +1399,12 @@ class RS(object):
         elif isinstance(colors, str):
             colors = [colors] * len(self.files)
         
+        elif colors == None:
+            colors = [None] * len(self.files)
         
         # Define the labels
         if legend_labels == 'default':
-            legend_labels = []
+            legend_labels = self.get_metadata('meas_id').values
 
             for col in data_Lab.columns:
                 data = data_Lab[col]
@@ -1200,7 +1416,7 @@ class RS(object):
                     legend_labels.append(data.name[0])
             
             legend_title = 'Measurement $n^o$'
-            
+                
         
         # Whether to plot the observer and illuminant info
         if obs_ill:
@@ -1221,7 +1437,7 @@ class RS(object):
         return plotting.CIELAB(data=data_mean, stds=data_std, legend_labels=legend_labels, colors=colors, title=title, fontsize=fontsize, legend_fontsize=legend_fontsize, legend_position=legend_position, legend_title=legend_title, obs_ill=obs_ill, save=save, path_fig=path_fig)
    
 
-    def plot_sp(self, std:Optional[bool] = True, spectra:Optional[str] = 'i', spectral_mode:Optional[str] = 'R', legend_labels:Union[str,list] = 'default', title:Optional[str] = None, fontsize:Optional[int] = 24, fontsize_legend:Optional[int] = 24, legend_title:Optional[str] = 'default', wl_range:Optional[tuple] = None, colors:Union[str,list] = None, lw:Union[int, list] = 2, ls:Union[str, list] = '-', text:Optional[str] = None, save=False, path_fig='cwd', derivation=False, smoothing=(1,0), report:Optional[bool] = False):
+    def plot_sp(self, std:Optional[bool] = True, spectra:Optional[str] = 'i', spectral_mode:Optional[str] = 'R', figsize:Optional[tuple] = (15,8), legend_labels:Union[str,list] = 'default', title:Optional[str] = None, fontsize:Optional[int] = 24, fontsize_legend:Optional[int] = 24, legend_title:Optional[str] = 'default', wl_range:Optional[tuple] = None, colors:Union[str,list] = None, lw:Union[int, list] = 2, ls:Union[str, list] = '-', text:Optional[str] = None, save=False, path_fig='cwd', derivation=False, smoothing=(1,0), report:Optional[bool] = False):
         """Plot the reflectance spectra corresponding to the associated microfading analyses.
 
         Parameters
@@ -1239,7 +1455,7 @@ class RS(object):
         
         spectral_mode : string, optional
             When 'R', it returns the reflectance spectra            
-            When 'A', it returns the absorption spectra using the following equation: A = -log(R)
+            When 'DR', it returns the density reflection using the following equation: DR = -log(R)
 
         legend_labels : Union[str, list], optional
             A list of labels respective to each element given in the data parameter that will be shown in the legend. When the list is empty there is no legend displayed, by default 'default'
@@ -1317,27 +1533,29 @@ class RS(object):
                 else:
                     data_s.append(np.zeros(len(data.values)))
                 
-            if data.name[1] == 'value':
+            if data.name[1] == 'nominal':
                 data_n.append(np.array([wavelengths,data.values]))
                 data_s.append(np.zeros(len(data.values)))         
         
 
         # define the labels of the legend
         if legend_labels == 'default':
-            legend_labels = []
-
+            legend_labels = self.get_metadata(labels='meas_id').values
+            """
             for col in data_sp.columns:
                 data = data_sp[col]
                 
                 if data.name[1] == 'mean':
                     legend_labels.append(data.name[0])
 
-                if data.name[1] == 'value':
+                if data.name[1] == 'nominal':
                     legend_labels.append(data.name[0])
+
+            """
 
         elif legend_labels == None or legend_labels == 'off':
             legend_labels = ''
-            
+                    
         
         # define the title of the legend
         if legend_title == 'default':
@@ -1346,7 +1564,7 @@ class RS(object):
         
         # define the colors of the curves
         if colors == 'sample':
-            colors = self.get_sRGB().T.values
+            colors = self.compute_sRGB().T.values
 
         elif isinstance(colors, str):
             colors = [colors] * len(data_n)
@@ -1356,7 +1574,7 @@ class RS(object):
 
 
 
-        return plotting.spectra(data=data_n, stds=data_s, spectral_mode=spectral_mode, legend_labels=legend_labels, title=title, fontsize=fontsize, fontsize_legend=fontsize_legend, legend_title=legend_title, x_range=wl_range, colors=colors, lw=lw, ls=ls, text=text, save=save, path_fig=path_fig, derivation=derivation)
+        return plotting.spectra(data=data_n, stds=data_s, spectral_mode=spectral_mode, figsize=figsize, legend_labels=legend_labels, title=title, fontsize=fontsize, fontsize_legend=fontsize_legend, legend_title=legend_title, x_range=wl_range, colors=colors, lw=lw, ls=ls, text=text, save=save, path_fig=path_fig, derivation=derivation)
         
 
 
@@ -1373,7 +1591,7 @@ class RS(object):
 
         # Define the colour of the curves
         if colors == 'sample':
-            colors = self.get_sRGB().iloc[0,:].values.clip(0,1).reshape(len(self.files),-1)
+            colors = self.compute_sRGB().iloc[0,:].values.clip(0,1).reshape(len(self.files),-1)
 
         elif isinstance(colors, str):
             colors = [colors] * len(self.files)
@@ -1521,7 +1739,7 @@ class RS(object):
         
         # Define the colour of the curves
         if colors == 'sample':
-            colors = self.get_sRGB().iloc[0,:].values.clip(0,1).reshape(len(self.files),-1)
+            colors = self.compute_sRGB().iloc[0,:].values.clip(0,1).reshape(len(self.files),-1)
 
         elif isinstance(colors, str):
             colors = [colors] * len(self.files)
@@ -1603,7 +1821,7 @@ class RS(object):
         return colour.colorimetry.MSDS_CMFS_STANDARD_OBSERVER[observers[observer]]
     
     
-    def get_sRGB(self, illuminant='default', observer='default', clip:Optional[bool] = True):
+    def compute_sRGB(self, illuminant='default', observer='default', clip:Optional[bool] = True):
         """Compute the sRGB values. 
 
         Parameters
@@ -1657,7 +1875,7 @@ class RS(object):
         meas_ids = self.get_meas_ids               
         df_sp = self.get_spectra() 
 
-        cols_to_keep = df_sp.columns[df_sp.columns.get_level_values(1).isin(['value', 'mean'])] 
+        cols_to_keep = df_sp.columns[df_sp.columns.get_level_values(1).isin(['nominal', 'mean'])] 
         df_sp_nominal = df_sp[cols_to_keep]
 
         
@@ -1685,7 +1903,7 @@ class RS(object):
         """
         df_sp = self.get_spectra()
 
-        cols_to_keep = df_sp.columns[df_sp.columns.get_level_values(1).isin(['value', 'mean'])] 
+        cols_to_keep = df_sp.columns[df_sp.columns.get_level_values(1).isin(['nominal', 'mean'])] 
         df_sp_nominal = df_sp[cols_to_keep]
 
         wls = {}
@@ -1695,11 +1913,10 @@ class RS(object):
 
         wavelengths = pd.DataFrame.from_dict(wls,orient='index').T
         
-
         return wavelengths
 
 
-    def get_XYZ(self, illuminant:Optional[str] = 'default', observer:Union[str,int] = 'default'):
+    def compute_XYZ(self, illuminant:Optional[str] = 'default', observer:Union[str,int] = 'default'):
         """Compute the XYZ values. 
 
         Parameters
@@ -1744,7 +1961,7 @@ class RS(object):
                      
         df_sp = self.get_spectra() 
 
-        cols_to_keep = df_sp.columns[df_sp.columns.get_level_values(1).isin(['value', 'mean'])] 
+        cols_to_keep = df_sp.columns[df_sp.columns.get_level_values(1).isin(['nominal', 'mean'])] 
         df_sp_nominal = df_sp[cols_to_keep]
 
         
@@ -1763,7 +1980,7 @@ class RS(object):
         return df_XYZ
           
 
-    def get_xy(self, illuminant:Optional[str] = 'default', observer:Union[str, int] = 'default'):
+    def compute_xy(self, illuminant:Optional[str] = 'default', observer:Union[str, int] = 'default'):
         """Compute the xy values. 
 
         Parameters
@@ -1808,7 +2025,7 @@ class RS(object):
                        
         df_sp = self.get_spectra() 
 
-        cols_to_keep = df_sp.columns[df_sp.columns.get_level_values(1).isin(['value', 'mean'])] 
+        cols_to_keep = df_sp.columns[df_sp.columns.get_level_values(1).isin(['nominal', 'mean'])] 
         df_sp_nominal = df_sp[cols_to_keep]
 
         
