@@ -14,7 +14,7 @@ style = {"description_width": "initial"}
 
 class DB:
 
-    def __init__(self, config_file=Path(__file__).parent / 'db_config.json') -> None:
+    def __init__(self, config_file=Path(__file__).parent / 'config_info.json') -> None:
         self.config_file =  config_file  
         try:      
             self.folder_db = Path(self.get_db_path())
@@ -810,22 +810,22 @@ class DB:
             return df_creators
         
         else:
-            print(f'The file {Path(self.folder_db) / "object_creators.txt"} is not existing. Make sure to create one by running the function "create_DB" from the microfading package.')
+            print(f'The file {Path(self.folder_db) / "object_creators.txt"} is not existing. Make sure to create one by running the function "create_DB" from the reflectance package.')
             return
 
 
     def get_db(self, db:Optional[str] = 'all'):
 
-        if (Path(self.folder_db) / 'DB_projects.csv').exists():
-            db_projects = pd.read_csv(Path(self.folder_db) / 'DB_projects.csv')
+        if (Path(self.folder_db) / 'projects_info.csv').exists():
+            db_projects = pd.read_csv(Path(self.folder_db) / 'projects_info.csv')
         else:
-            print(f'The DB_projects.csv file is not existing. Make sure to create one by running the function "create_DB" from the microfading package.')
+            print(f'The projects_info.csv file is not existing. Make sure to create one by running the function "create_DB" from the reflectance package.')
             return
         
-        if (Path(self.folder_db) / 'DB_objects.csv').exists():        
-            db_objects = pd.read_csv(Path(self.folder_db) / 'DB_objects.csv')
+        if (Path(self.folder_db) / 'objects_info.csv').exists():        
+            db_objects = pd.read_csv(Path(self.folder_db) / 'objects_info.csv')
         else:
-            print(f'The DB_objects.csv file is not existing. Make sure to create one by running the function "create_DB" from the microfading package.')
+            print(f'The objects_info.csv file is not existing. Make sure to create one by running the function "create_DB" from the reflectance package.')
             return
 
         if db == 'all':
@@ -846,7 +846,7 @@ class DB:
                 return config
         
         else:
-            print('The db_config.json has been deleted ! Please re-install the microfading package.')
+            print('The config_info.json has been deleted from the site-packages folder ! Please re-install the reflectance package.')
             return None      
     
         
@@ -1020,10 +1020,11 @@ class DB:
             print('No databases have been created yet.')
 
 
-    def set_comment_info(self):
+    def set_comments_info(self):
 
-        parameters = RS_info_templates.device_info[1:] + RS_info_templates.analysis_info[1:]
+        parameters = RS_info_templates.device_info[1:] + RS_info_templates.system_info[1:] + RS_info_templates.analysis_info[1:]
         devices = list(self.get_db_config()['devices'].keys())
+        print(parameters)
 
         wg_device = ipw.Dropdown(
             description='Device ID',
