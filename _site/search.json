@@ -1,0 +1,79 @@
+[
+  {
+    "objectID": "docs/installation.html",
+    "href": "docs/installation.html",
+    "title": "reflectance",
+    "section": "",
+    "text": "To install the latest version of the reflectance package, open a terminal and enter the following command:\npip install reflectance\nIf you wish to install a specific version of the reflectance package, the version number can be added to the pip command as illustrated in the following example:\npip install reflectance==0.1.1\n \nTo upgrade the package, open a terminal and enter the following command\npip install --upgrade reflectance",
+    "crumbs": [
+      "Home",
+      "Installation"
+    ]
+  },
+  {
+    "objectID": "docs/get-started.html",
+    "href": "docs/get-started.html",
+    "title": "reflectance",
+    "section": "",
+    "text": "In this section, we will give you all the essential information to correctly start using the reflectance package.",
+    "crumbs": [
+      "Home",
+      "Tutorials"
+    ]
+  },
+  {
+    "objectID": "docs/get-started.html#do-you-have-reflectance-data-files",
+    "href": "docs/get-started.html#do-you-have-reflectance-data-files",
+    "title": "reflectance",
+    "section": "1. Do you have reflectance data files?",
+    "text": "1. Do you have reflectance data files?\nThe whole package is based on reflectance data files that you either obtained yourself when performing reflectance measurements or obtained from someone else. Each file corresponds to a single measurement and consists of an excel file with a specific structure organizing the data inside the file. Check the datafiles section for more information about the data files.\nIf you don’t have any reflectance files, the package has a function to load reflectance files, so that you can use these files to play with the functionalities of the package (see get_datasets section).\nIf you have files, the following lines of code shows how you can import them in the jupyter notebook:  \n# I use this package to select files on my local computer\nfrom glob import glob \n# I use the command 'cd &lt;path&gt;' to change the current directory and be in the folder where the reflectance files are.\ncd /home/username/Documents/RS\n# Using the glob method, I select the files that contain the words 'BW1' and 'RS' in the filename.\nfiles = sorted(glob('*BW1*RS*'))\nfiles\n\n[PosixPath('/home/username/Documents/RS/2024-144_RS.BWS002.G01_avg_BW1_model_2024-07-30_SP2.xlsx'),\nPosixPath('/home/username/Documents/RS/2024-144_RS.BWS003.G01_avg_BW1_model_2024-08-02_SP2.xlsx')]",
+    "crumbs": [
+      "Home",
+      "Tutorials"
+    ]
+  },
+  {
+    "objectID": "docs/get-started.html#central-role-of-the-rs-class",
+    "href": "docs/get-started.html#central-role-of-the-rs-class",
+    "title": "reflectance",
+    "section": "2. Central role of the RS class",
+    "text": "2. Central role of the RS class\nOnce you have selected reflectance files and encapsulated them inside a python list, you will need to create an instance of the RS class passing the variable for your reflectance files as argument (see code below). Most of the functions provided by the package can only be accessed through the RS class.\n \nimport reflectance as rf\nrs = rf.RS(files=files)\nrs\n\nReflectance data class - Number of files = 2",
+    "crumbs": [
+      "Home",
+      "Tutorials"
+    ]
+  },
+  {
+    "objectID": "docs/get-started.html#three-keywords-function-get-plot-compute",
+    "href": "docs/get-started.html#three-keywords-function-get-plot-compute",
+    "title": "reflectance",
+    "section": "3. Three keywords function: get, plot, compute",
+    "text": "3. Three keywords function: get, plot, compute\nOnce you have created an instance of the RS class, you can access the functions. The name of each function starts by a verb: get, plot, or compute. Enter one of the verbs and use the auto-completion tool (Tab button) to display a list of available functions.\n{: .img-medium align=left } /// caption List of all the plotting functions. ///\nThe functions can be run without passing any arguments, this will output the default values. To adjust the output to your needs, you will need to modify the values of the arguments. For instance, the function get_cielab() returns the \\(\\Delta E_{00}\\) values by default. If you want to retrieve other CIELAB coordinates, you will need to pass in a new value for the argument coordinates (see code below). To know the role of each argument in a function and which values can you pass in, you will need to read the documentation (see below). The latter can either be access in the jupyter notebook or in the References section of this website.\n{: .img-large align=left } /// caption Play with the argument values of functions ///",
+    "crumbs": [
+      "Home",
+      "Tutorials"
+    ]
+  },
+  {
+    "objectID": "docs/get-started.html#use-the-databases",
+    "href": "docs/get-started.html#use-the-databases",
+    "title": "reflectance",
+    "section": "4. Use the databases",
+    "text": "4. Use the databases\nIf you are planning to perform reflectance measurements more than once, we advise you to make use of the databases. This will allow you to save metadata about the measured objects in the excel data file, which can ultimately be used to perform queries. For example, you could ask to retrieve all measurements performed on a given material or on objects created by a specific artist,etc. Unfortunately, such as a possibility has not been implemented yet.\nTo start using the databases, you will first need to create them and fill them with some information. To learn how to create databases, see the Create databases section. To learn how to fill the databases and properly manage them, see the Databases management section.",
+    "crumbs": [
+      "Home",
+      "Tutorials"
+    ]
+  },
+  {
+    "objectID": "docs/get-started.html#use-the-docstrings",
+    "href": "docs/get-started.html#use-the-docstrings",
+    "title": "reflectance",
+    "section": "5. Use the docstrings",
+    "text": "5. Use the docstrings\nWhenever you will use functions from the reflectance package, you will always be able to access the docstrings. These contain valuable information that will help you to adequately use the functions. To open the dosctrings, you have two possibilites:\n\nWrite the name of a function (without parentheses) followed by a question mark (see example below).\n{: .img-Large align=left } /// caption Opening a docstring with a question mark. ///\nWrite the name of a function (with parentheses), place the cursor inside the parentheses and press Ctrl + Caps Lock (see example below).\n\n{: .img-Large align=left } /// caption Opening a tooltip docstring window. ///",
+    "crumbs": [
+      "Home",
+      "Tutorials"
+    ]
+  }
+]

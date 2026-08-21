@@ -1,0 +1,7 @@
+---
+execute: 
+  output: true
+format:
+  html:
+    code-fold: false
+---

@@ -1,0 +1,80 @@
+project:
+  type: website  
+  #output-dir: docs/_site/
+
+website:
+  
+  title: "reflectance"
+  page-footer: "Copyright 2026, Gauthier Patin" 
+  
+
+  sidebar:    
+      style: "docked"
+      background: light 
+      border: false     
+      contents:
+        - text: "Introduction"
+          href: index.qmd
+        - text: "Installation"
+          href: installation.qmd
+        - text: "Package overview"
+          href: package-overview.qmd
+      
+        - section: "Tutorials"   
+          contents:
+            - text: "Configuration functions"
+              href: configuration-functions.qmd
+
+            - text: "Database management"
+              href: create-databases.qmd           
+
+            - text: "Process rawdata files"
+              href: rawdata-processing.qmd
+        
+        - section: "How-to-guides"
+          contents:
+            - text: "Create databases"
+              href: create-databases.qmd
+
+            - text: "Create RS class object"
+              href: create-RS-class-object.ipynb
+
+            - text: "Retrieve dataset files"
+              href: retrieve-test-datasets.qmd
+
+
+        - section: "Explanation"
+          contents:
+            - text: "Datafiles"
+              href: datafiles.qmd
+                   
+
+  
+  navbar:
+    background: primary
+    search: true
+    left:
+      - href: index.qmd
+        text: Home
+      - href: get-started.qmd
+        text: "Get started"
+      
+          
+    
+    tools:
+      - icon: github
+        href: https://github.com/g-patin/reflectance
+    
+      
+        
+
+format:
+  html:
+    theme:
+      - cosmo
+      - brand
+    css: styles.css
+    toc: true
+
+
+

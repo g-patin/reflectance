@@ -1,0 +1,73 @@
+---
+title: "Retrieve dataset files" 
+execute: 
+  output: true
+format:
+  html:
+    code-fold: false
+---
+
+# Basic method
+
+This page describes how to retrieve examples of interim files that can subsequently be used to explore the microfading package. Use the following steps to retrieve the dataset files in your notebook:
+
+1. Open a jupyter notebook
+
+2. Import the reflectance package
+
+3. Use the `get_datasets()` function
+
+
+&nbsp;
+
+<ins>Python code examples</ins>
+```{python}
+import reflectance as rf
+
+ds = rf.get_datasets()
+ds
+```
+
+
+
+# Function description
+
+The `get_datasets()` function has three optional parameters that allows you to filter the files:
+
+- *device* (string) : Acronym of the spectrometer used to perform measurements. The default value is 'AVT' which will return the files taken with an Avantes spectrometer. There are currently four different spectrometers registered:
+    - 'AVT': Avantes, AvaSpec-ULS-EVO-RS spectrometer
+    - 'KM': Konica Minolta, CM-2600d spectrophotometer
+    - 'OO': Ocean Optics, USB4000-VIS-NIR-ES spectrometer
+    - 'Tidas': Tidas, S 400 spectrometer
+
+- *rawfiles* (True or False) : you can decide to retrieve rawdata files or interim files. The former will enable you to run the `process_rawdata()` function, while the latter will allow you to directly create an `RS` class instance and explore the functionalities of the package.
+
+- *stdev* (True or False) : you can decide to retrieve file with or without standard deviation values. This parameter only applies for the *interim* files.
+
+
+&nbsp;
+
+<ins>Python code examples</ins>
+
+```{python}
+
+import reflectance as rf
+
+# retrieve the raw datafiles taken with a Tidas spectrometer
+ds = rf.get_datasets(device='Tidas', rawfiles=True)
+ds
+```
+
+
+
+
+&nbsp;
+
+```{python}
+
+import reflectance as rf
+
+# retrieve the interim datafiles taken with an Avantes spectrometer
+ds = rf.get_datasets(device='AVT', rawfiles=False)
+ds
+```

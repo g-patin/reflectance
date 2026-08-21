@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.3 (1:1.4.3+202512261034+0d15f75042)"
+   sodipodi:docname="figures.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.4538721"
+     inkscape:cx="-473.56299"
+     inkscape:cy="-85.977304"
+     inkscape:window-width="3840"
+     inkscape:window-height="2123"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <marker
+       style="overflow:visible"
+       id="ConcaveTriangle"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Concave triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.7)"
+         d="M -2,-4 9,0 -2,4 c 2,-2.33 2,-5.66 0,-8 z"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+         id="path7" />
+    </marker>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#ffffff;stroke:none;stroke-width:0.499999;stroke-miterlimit:0;stroke-dasharray:none"
+       id="rect22"
+       width="139.94669"
+       height="73.158089"
+       x="-204.41417"
+       y="0.83467704" />
+    <g
+       id="g11"
+       transform="translate(3.1750001)">
+      <rect
+         style="fill:none;stroke:#000000;stroke-width:0.499999;stroke-miterlimit:0;stroke-dasharray:none"
+         id="rect1"
+         width="38.681297"
+         height="15.216088"
+         x="-195.82207"
+         y="15.634082" />
+      <text
+         xml:space="preserve"
+         style="font-size:5.29167px;line-height:1;font-family:Serif;-inkscape-font-specification:Serif;text-align:center;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;fill:none;stroke:#000000;stroke-width:0.499999;stroke-miterlimit:0;stroke-dasharray:none"
+         x="-176.53955"
+         y="22.56904"
+         id="text1"><tspan
+           sodipodi:role="line"
+           id="tspan1"
+           style="font-size:5.29167px;fill:#000000;stroke:none;stroke-width:0.5"
+           x="-176.53955"
+           y="22.56904">configuration</tspan><tspan
+           sodipodi:role="line"
+           style="font-size:5.29167px;fill:#000000;stroke:none;stroke-width:0.5"
+           x="-176.53955"
+           y="27.86071"
+           id="tspan2">functions</tspan></text>
+    </g>
+    <g
+       id="g5"
+       transform="translate(-6.879167)">
+      <text
+         xml:space="preserve"
+         style="font-size:5.29167px;line-height:1;font-family:Serif;-inkscape-font-specification:Serif;text-align:center;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;fill:none;stroke:#000000;stroke-width:0.499999;stroke-miterlimit:0;stroke-dasharray:none"
+         x="-120.93"
+         y="25.214874"
+         id="text4"><tspan
+           sodipodi:role="line"
+           style="font-size:5.29167px;fill:#000000;stroke:none;stroke-width:0.5"
+           x="-120.93"
+           y="25.214874"
+           id="tspan4">RS class</tspan></text>
+      <rect
+         style="fill:none;stroke:#000000;stroke-width:0.499999;stroke-miterlimit:0;stroke-dasharray:none"
+         id="rect5"
+         width="38.681297"
+         height="15.216088"
+         x="-140.26031"
+         y="15.634082" />
+    </g>
+    <g
+       id="g10"
+       transform="translate(-16.81789)">
+      <rect
+         style="fill:none;stroke:#000000;stroke-width:0.499999;stroke-miterlimit:0;stroke-dasharray:none"
+         id="rect6"
+         width="24.268797"
+         height="15.216088"
+         x="-76.635452"
+         y="15.634082" />
+      <text
+         xml:space="preserve"
+         style="font-size:5.29167px;line-height:1;font-family:Serif;-inkscape-font-specification:Serif;text-align:center;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;fill:none;stroke:#000000;stroke-width:0.499999;stroke-miterlimit:0;stroke-dasharray:none"
+         x="-64.524307"
+         y="22.505737"
+         id="text7"><tspan
+           sodipodi:role="line"
+           style="font-size:5.29167px;fill:#000000;stroke:none;stroke-width:0.5"
+           x="-64.524307"
+           y="22.505737"
+           id="tspan7">interim</tspan><tspan
+           sodipodi:role="line"
+           style="font-size:5.29167px;fill:#000000;stroke:none;stroke-width:0.5"
+           x="-64.524307"
+           y="27.797407"
+           id="tspan10">files</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:5.29167px;line-height:1;font-family:Serif;-inkscape-font-specification:Serif;text-align:center;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;fill:none;stroke:#000000;stroke-width:0.499999;stroke-miterlimit:0;stroke-dasharray:none"
+       x="-150.67795"
+       y="6.8598924"
+       id="text9"><tspan
+         sodipodi:role="line"
+         style="font-size:5.29167px;fill:#000000;stroke:none;stroke-width:0.5"
+         x="-150.67795"
+         y="6.8598924"
+         id="tspan9">Reflectance package environment</tspan></text>
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.5;stroke-miterlimit:0;stroke-dasharray:none"
+       id="rect10"
+       width="100.52092"
+       height="60.769882"
+       x="-200.8131"
+       y="9.375598" />
+    <path
+       style="fill:#000000;stroke:none;stroke-width:0.499999;stroke-miterlimit:0;stroke-dasharray:none"
+       d="M -45.553793,6.1767857 -92.394417,-1.5441964"
+       id="path12" />
+    <path
+       style="fill:#000000;stroke:#000000;stroke-width:0.499998;stroke-miterlimit:0;stroke-dasharray:none;marker-end:url(#ConcaveTriangle)"
+       d="m -93.18994,23.234974 -11.87577,0.0076"
+       id="path13" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.499999;stroke-miterlimit:0;stroke-dasharray:none"
+       id="rect13"
+       width="38.681297"
+       height="15.216088"
+       x="-261.54318"
+       y="33.154324" />
+    <text
+       xml:space="preserve"
+       style="font-size:4.58611px;line-height:1;font-family:Serif;-inkscape-font-specification:Serif;text-align:center;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;fill:none;stroke:#000000;stroke-width:0.499999;stroke-miterlimit:0;stroke-dasharray:none"
+       x="-173.41391"
+       y="48.453682"
+       id="text14"><tspan
+         sodipodi:role="line"
+         style="font-size:4.58611px;fill:#000000;stroke:none;stroke-width:0.5"
+         x="-173.41391"
+         y="48.453682"
+         id="tspan14">config.py</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.58611px;line-height:1;font-family:Serif;-inkscape-font-specification:Serif;text-align:center;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;fill:none;stroke:#000000;stroke-width:0.499999;stroke-miterlimit:0;stroke-dasharray:none"
+       x="-173.35681"
+       y="54.861408"
+       id="text15"><tspan
+         sodipodi:role="line"
+         style="font-size:4.58611px;fill:#000000;stroke:none;stroke-width:0.5"
+         x="-173.35681"
+         y="54.861408"
+         id="tspan15">config_info.json</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.5861px;line-height:1;font-family:Serif;-inkscape-font-specification:Serif;text-align:center;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;fill:#000000;stroke:#000000;stroke-width:0.499999;stroke-miterlimit:0;stroke-dasharray:none"
+       x="-141.55135"
+       y="83.386604"
+       id="text17"><tspan
+         sodipodi:role="line"
+         id="tspan17"
+         style="stroke-width:0.5"
+         x="-141.55135"
+         y="86.870964" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.58611px;line-height:1;font-family:Serif;-inkscape-font-specification:Serif;text-align:center;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;fill:none;stroke:#000000;stroke-width:0.499999;stroke-miterlimit:0;stroke-dasharray:none"
+       x="-173.36577"
+       y="61.331837"
+       id="text19"><tspan
+         sodipodi:role="line"
+         style="font-size:4.58611px;fill:#000000;stroke:none;stroke-width:0.5"
+         x="-173.36577"
+         y="61.331837"
+         id="tspan19">process_rawfiles.py</tspan></text>
+    <g
+       id="g22"
+       transform="translate(0,0.80995941)">
+      <text
+         xml:space="preserve"
+         style="font-size:4.58611px;line-height:1;font-family:Serif;-inkscape-font-specification:Serif;text-align:center;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;fill:none;stroke:#000000;stroke-width:0.499999;stroke-miterlimit:0;stroke-dasharray:none"
+         x="-128.18437"
+         y="49.289677"
+         id="text16"><tspan
+           sodipodi:role="line"
+           style="font-size:4.58611px;fill:#000000;stroke:none;stroke-width:0.5"
+           x="-128.18437"
+           y="49.289677"
+           id="tspan16">plotting.py</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-size:4.58611px;line-height:1;font-family:Serif;-inkscape-font-specification:Serif;text-align:center;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;fill:none;stroke:#000000;stroke-width:0.499999;stroke-miterlimit:0;stroke-dasharray:none"
+         x="-128.17989"
+         y="58.556084"
+         id="text18"><tspan
+           sodipodi:role="line"
+           style="font-size:4.58611px;fill:#000000;stroke:none;stroke-width:0.5"
+           x="-128.17989"
+           y="58.556084"
+           id="tspan18">utils.py</tspan></text>
+      <rect
+         style="fill:none;stroke:#000000;stroke-width:0.499999;stroke-miterlimit:0;stroke-dasharray:none"
+         id="rect19"
+         width="29.802168"
+         height="21.90382"
+         x="-143.02611"
+         y="41.738228" />
+    </g>
+    <path
+       style="fill:#000000;stroke:#000000;stroke-width:0.499998;stroke-miterlimit:0;stroke-dasharray:none;marker-end:url(#ConcaveTriangle)"
+       d="m -127.80636,30.629495 0.008,8.572555"
+       id="path20" />
+    <path
+       style="fill:#000000;stroke:#000000;stroke-width:0.499998;stroke-miterlimit:0;stroke-dasharray:none;marker-end:url(#ConcaveTriangle)"
+       d="m -173.31377,30.629495 0.008,8.572555"
+       id="path21" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.499999;stroke-miterlimit:0;stroke-dasharray:none"
+       id="rect21"
+       width="49.274593"
+       height="21.812828"
+       x="-197.94371"
+       y="42.548187" />
+  </g>
+</svg>

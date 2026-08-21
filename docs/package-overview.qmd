@@ -1,0 +1,28 @@
+---
+title: "Package overview"
+execute: 
+  output: true
+format:
+  html:
+    code-fold: false
+---
+
+The reflectance package is composed of three main parts, as illustrated in Figure 1:
+
+&nbsp;
+
+1. **Configuration functions**
+
+  This part contains all functions related to the configuration of the package. It allows you to define some behaviours that the functions in the 'RS' will automatically use. Have a look at the [configuration section](configuration-functions.qmd) for more information.
+
+&nbsp;
+
+2. **Rawfiles processing functions**
+
+Functions that are used to convert the rawdata files provided by the spectrometer into *interim* files, i.e. standardized excel or OpenDocument files that are required to create an instance of the `RS` class (see following point). Have a look at the [datafile section](datafiles.qmd) and the [process rawdata files](rawdata-processing.qmd) for more information.
+
+&nbsp;
+
+3. **`RS` class**
+
+This part contains functions embedded in the `RS` class and that will help you to manipulate and visualize your reflectance data. The `RS` class uses the data and info contained in the *interim* files to create visualizations or perform further computation steps.

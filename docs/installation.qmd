@@ -1,20 +1,32 @@
+---
+execute: 
+  output: false
+format:
+  html:
+    code-fold: false
+---
+
+
+# Install package
 
 To install the latest version of the reflectance package, open a terminal and enter the following command:
 
-```
+```{python}
 pip install reflectance
 ```
 
 If you wish to install a specific version of the reflectance package, the version number can be added to the pip command as illustrated in the following example:
 
-```
+```{python}
 pip install reflectance==0.1.1
 ```
 
 &nbsp;
 
+# Upgrade package
+
 To upgrade the package, open a terminal and enter the following command
 
-```
+```{python}
 pip install --upgrade reflectance
 ```

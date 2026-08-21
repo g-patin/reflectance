@@ -1,30 +1,32 @@
+---
+title: "Get started"
+execute: 
+  output: true
+format:
+  html:
+    code-fold: false
+---
+
 In this section, we will give you all the essential information to correctly start using the `reflectance` package.
 
 ## 1. **Do you have reflectance data files?**
 
-The whole package is based on reflectance data files that you either obtained yourself when performing reflectance measurements or obtained from someone else. Each file corresponds to a single measurement and consists of an excel file with a specific structure organizing the data inside the file. Check the [datafiles section](https://g-patin.github.io/reflectance/datafiles/) for more information about the data files. 
+The whole package is based on reflectance data files that you either obtained yourself when performing reflectance measurements or obtained from someone else. Each file corresponds to a single measurement and consists of an excel file with a specific structure organizing the data inside the file. Check the [datafiles section](datafiles.qmd) for more information about the data files. 
 	
 If you don't have any reflectance files, the package has a function to load reflectance files, so that you can use these files to play with the functionalities of the package (see [get_datasets](https://g-patin.github.io/reflectance/get_datasets/) section).  
 	
-If you have files, the following lines of code shows how you can import them in the jupyter notebook:
+If you have files, there are many possibilities to select and encapsulate your local files inside a python list object. I will show only one of the methods for which I will use the `glob` package.
 &nbsp;
 
-```python
+```{python}
 # I use this package to select files on my local computer
 from glob import glob 
 ```
 
-
-```python	
-# I use the command 'cd <path>' to change the current directory and be in the folder where the reflectance files are.
-cd /home/username/Documents/RS
-```
-
-
-```python
+```{python}
 # Using the glob method, I select the files that contain the words 'BW1' and 'RS' in the filename.
+# Make
 files = sorted(glob('*BW1*RS*'))
-files
 ```
 
 <div class="output-area">
@@ -34,19 +36,29 @@ PosixPath('/home/username/Documents/RS/2024-144_RS.BWS003.G01_avg_BW1_model_2024
 </div>
 &nbsp;
 
+```{python}
+# I use the command 'cd <path>' to change the current directory and be in the folder where the reflectance files are.
+#cd /home/username/Documents/RS
+import reflectance as rf
+files = rf.get_datasets(device='AVT',rawfiles=False)
+files
+```
+
 
 ## 2. **Central role of the `RS` class**
 
 Once you have selected reflectance files and encapsulated them inside a python list, you will need to create an instance of the `RS` class passing the variable for your reflectance files as argument (see code below). Most of the functions provided by the package can only be accessed through the `RS` class.  
 &nbsp;
 	
-```python
+```{python}
 import reflectance as rf
 ```
 
-```python
+```{python}
+import reflectance as rf
+files = rf.get_datasets(device='AVT',rawfiles=False)
 rs = rf.RS(files=files)
-rs
+print(files)
 ```
 
 <div class="output-area">
