@@ -327,11 +327,11 @@ window.Quarto = {
 <p>The whole package is based on reflectance data files that you either obtained yourself when performing reflectance measurements or obtained from someone else. Each file corresponds to a single measurement and consists of an excel file with a specific structure organizing the data inside the file. Check the <a href="./datafiles.html">datafiles section</a> for more information about the data files.</p>
 <p>If you don’t have any reflectance files, the package has a function to load reflectance files, so that you can use these files to play with the functionalities of the package (see <a href="https://g-patin.github.io/reflectance/get_datasets/">get_datasets</a> section).</p>
 <p>If you have files, there are many possibilities to select and encapsulate your local files inside a python list object. I will show only one of the methods for which I will use the <code>glob</code> package. &nbsp;</p>
-<div id="814ee50e" class="cell" data-execution_count="1">
+<div id="9030096d" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># I use this package to select files on my local computer</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> glob <span class="im">import</span> glob </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="2e748b12" class="cell" data-execution_count="2">
+<div id="74968b69" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Using the glob method, I select the files that contain the words 'BW1' and 'RS' in the filename.</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Make</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>files <span class="op">=</span> <span class="bu">sorted</span>(glob(<span class="st">'*BW1*RS*'</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -342,7 +342,7 @@ PosixPath('/home/username/Documents/RS/2024-144_RS.BWS003.G01_avg_BW1_model_2024
 </pre>
 </div>
 <p>&nbsp;</p>
-<div id="82cdc73d" class="cell" data-execution_count="3">
+<div id="af867955" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># I use the command 'cd &lt;path&gt;' to change the current directory and be in the folder where the reflectance files are.</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#cd /home/username/Documents/RS</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> reflectance <span class="im">as</span> rf</span>
@@ -357,10 +357,10 @@ PosixPath('/home/username/Documents/RS/2024-144_RS.BWS003.G01_avg_BW1_model_2024
 <h2 class="anchored" data-anchor-id="central-role-of-the-rs-class">2. <strong>Central role of the <code>RS</code> class</strong></h2>
 <p>Once you have selected reflectance files and encapsulated them inside a python list, you will need to create an instance of the <code>RS</code> class passing the variable for your reflectance files as argument (see code below). Most of the functions provided by the package can only be accessed through the <code>RS</code> class.<br>
 &nbsp;</p>
-<div id="256b39a9" class="cell" data-execution_count="4">
+<div id="dfefa55c" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> reflectance <span class="im">as</span> rf</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="b8eb5ac7" class="cell" data-execution_count="5">
+<div id="6e63f066" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> reflectance <span class="im">as</span> rf</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>files <span class="op">=</span> rf.get_datasets(device<span class="op">=</span><span class="st">'AVT'</span>,rawfiles<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>rs <span class="op">=</span> rf.RS(files<span class="op">=</span>files)</span>
