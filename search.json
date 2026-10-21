@@ -1,0 +1,226 @@
+[
+  {
+    "objectID": "get-started.html",
+    "href": "get-started.html",
+    "title": "Get started",
+    "section": "",
+    "text": "In this section, we will give you all the essential information to correctly start using the reflectance package."
+  },
+  {
+    "objectID": "get-started.html#do-you-have-reflectance-data-files",
+    "href": "get-started.html#do-you-have-reflectance-data-files",
+    "title": "Get started",
+    "section": "1. Do you have reflectance data files?",
+    "text": "1. Do you have reflectance data files?\nThe whole package is based on reflectance data files that you either obtained yourself when performing reflectance measurements or obtained from someone else. Each file corresponds to a single measurement and consists of an excel file with a specific structure organizing the data inside the file. Check the datafiles section for more information about the data files.\nIf you don’t have any reflectance files, the package has a function to load reflectance files, so that you can use these files to play with the functionalities of the package (see get_datasets section).\nIf you have files, there are many possibilities to select and encapsulate your local files inside a python list object. I will show only one of the methods for which I will use the glob package.  \n\n# I use this package to select files on my local computer\nfrom glob import glob \n\n\n# Using the glob method, I select the files that contain the words 'BW1' and 'RS' in the filename.\n# Make\nfiles = sorted(glob('*BW1*RS*'))\n\n\n[PosixPath('/home/username/Documents/RS/2024-144_RS.BWS002.G01_avg_BW1_model_2024-07-30_SP2.xlsx'),\nPosixPath('/home/username/Documents/RS/2024-144_RS.BWS003.G01_avg_BW1_model_2024-08-02_SP2.xlsx')]\n\n\n \n\n# I use the command 'cd &lt;path&gt;' to change the current directory and be in the folder where the reflectance files are.\n#cd /home/username/Documents/RS\nimport reflectance as rf\nfiles = rf.get_datasets(device='AVT',rawfiles=False)\nfiles\n\n[PosixPath('/home/gpatin/anaconda3/lib/python3.13/site-packages/reflectance/datasets/2023-103_RS.2751MK.01_G01_edge_heritage_Shirley-Temple_2024-06-04_SP04.xlsx')]"
+  },
+  {
+    "objectID": "get-started.html#central-role-of-the-rs-class",
+    "href": "get-started.html#central-role-of-the-rs-class",
+    "title": "Get started",
+    "section": "2. Central role of the RS class",
+    "text": "2. Central role of the RS class\nOnce you have selected reflectance files and encapsulated them inside a python list, you will need to create an instance of the RS class passing the variable for your reflectance files as argument (see code below). Most of the functions provided by the package can only be accessed through the RS class.\n \n\nimport reflectance as rf\n\n\nimport reflectance as rf\nfiles = rf.get_datasets(device='AVT',rawfiles=False)\nrs = rf.RS(files=files)\nprint(files)\n\n[PosixPath('/home/gpatin/anaconda3/lib/python3.13/site-packages/reflectance/datasets/2023-103_RS.2751MK.01_G01_edge_heritage_Shirley-Temple_2024-06-04_SP04.xlsx')]\n\n\n\nReflectance data class - Number of files = 2"
+  },
+  {
+    "objectID": "get-started.html#three-keywords-function-get-plot-compute",
+    "href": "get-started.html#three-keywords-function-get-plot-compute",
+    "title": "Get started",
+    "section": "3. Three keywords function: get, plot, compute",
+    "text": "3. Three keywords function: get, plot, compute\nOnce you have created an instance of the RS class, you can access the functions. The name of each function starts by a verb: get, plot, or compute. Enter one of the verbs and use the auto-completion tool (Tab button) to display a list of available functions.\n{: .img-medium align=left } /// caption List of all the plotting functions. ///\nThe functions can be run without passing any arguments, this will output the default values. To adjust the output to your needs, you will need to modify the values of the arguments. For instance, the function get_cielab() returns the \\(\\Delta E_{00}\\) values by default. If you want to retrieve other CIELAB coordinates, you will need to pass in a new value for the argument coordinates (see code below). To know the role of each argument in a function and which values can you pass in, you will need to read the documentation (see below). The latter can either be access in the jupyter notebook or in the References section of this website.\n{: .img-large align=left } /// caption Play with the argument values of functions ///"
+  },
+  {
+    "objectID": "get-started.html#use-the-databases",
+    "href": "get-started.html#use-the-databases",
+    "title": "Get started",
+    "section": "4. Use the databases",
+    "text": "4. Use the databases\nIf you are planning to perform reflectance measurements more than once, we advise you to make use of the databases. This will allow you to save metadata about the measured objects in the excel data file, which can ultimately be used to perform queries. For example, you could ask to retrieve all measurements performed on a given material or on objects created by a specific artist,etc. Unfortunately, such as a possibility has not been implemented yet.\nTo start using the databases, you will first need to create them and fill them with some information. To learn how to create databases, see the Create databases section. To learn how to fill the databases and properly manage them, see the Databases management section."
+  },
+  {
+    "objectID": "get-started.html#use-the-docstrings",
+    "href": "get-started.html#use-the-docstrings",
+    "title": "Get started",
+    "section": "5. Use the docstrings",
+    "text": "5. Use the docstrings\nWhenever you will use functions from the reflectance package, you will always be able to access the docstrings. These contain valuable information that will help you to adequately use the functions. To open the dosctrings, you have two possibilites:\n\nWrite the name of a function (without parentheses) followed by a question mark (see example below).\n{: .img-Large align=left } /// caption Opening a docstring with a question mark. ///\nWrite the name of a function (with parentheses), place the cursor inside the parentheses and press Ctrl + Caps Lock (see example below).\n\n{: .img-Large align=left } /// caption Opening a tooltip docstring window. ///"
+  },
+  {
+    "objectID": "package-overview.html",
+    "href": "package-overview.html",
+    "title": "Package overview",
+    "section": "",
+    "text": "The reflectance package is composed of three main parts, as illustrated in Figure 1:\n\nConfiguration functions\n\nThis part contains all functions related to the configuration of the package. It allows you to define some behaviours that the functions in the ‘RS’ will automatically use. Have a look at the configuration section for more information.\n\nRawfiles processing functions\n\nFunctions that are used to convert the rawdata files provided by the spectrometer into interim files, i.e. standardized excel or OpenDocument files that are required to create an instance of the RS class (see following point). Have a look at the datafile section and the process rawdata files for more information.\n\nRS class\n\nThis part contains functions embedded in the RS class and that will help you to manipulate and visualize your reflectance data. The RS class uses the data and info contained in the interim files to create visualizations or perform further computation steps.\n\n{: .img-medium align=left }\n{ width: 400px }\n/// caption Overview of the project. ///",
+    "crumbs": [
+      "Home",
+      "Package overview"
+    ]
+  },
+  {
+    "objectID": "configuration-functions.html",
+    "href": "configuration-functions.html",
+    "title": "Configuration functions",
+    "section": "",
+    "text": "In this section, we will show you how to configure some parameters of the reflectance package.\nFirst, start by importing the reflectance package as showed below. In the section configuration steps, you will\n\nimport reflectance as rf\n\n\n# Place the cursor just after the point and press the `Tab` button on your keyboard.\n# You will see a small window appearing with a list of all the available functions\n\nrf.\n\nThe name of the configuration functions follows a pattern defined as: [verb]_[noun]\nexemple:\nrf.get_colorimetry_info()\n\nConfiguration steps\n\nConfigure the\n\nThere are three different verbs you can use and that define the actions you can perform:\n\nget : retrieve information about the configuration\nset : configure the parameters registered in the config_info.json file\nremove: delete the value of a parameter that you registered\n\n\n\nGet functions\nThe get functions (described in Table 1) enables you to retrieve information about the configuration. The main get function is get_config() which will return all the parameters you have saved. The content of the file consists of seven dictionaries (databases, devices, colorimetry, comments, filenaming, institution, systems) that you can used as parameter inside the get_config() function.\nFor example, to retrieve the information about the devices only, you would type:\nrf.get_config('devices')\nAt the beginning, when you haven’t configured any parameters, all the dictionaries are empty. You will populate them with the set functions (see below).\nTable 1. Description of the get functions.\n\n\n\n\n\n\n\nget_colorimetric_info()\nreturns the observer and illuminant default values\n\n\nget config()\nreturns the content of the config_info.json file\n\n\nget_institution_info()\nreturns information about your institution\n\n\n\n\n\nSet functions\nWhen you start to configure the parameters, we recommend you to follow the directions described below:\n\nConfigure the system\n\nrf.set_systems_info()\nStart by configuration the systems you are using to perform the measuring. A system consists of the overall structure necessary to perform the measuring, it includes the device (i.e. the spectrometer) but not only ; the lamps, the fibers, the filters, etc… are also part of part the system.\nLater, the reflectance package will use the system ID number to retrieve information about your system and include in them in the interim files.\n\nConfigure the device\n\nrf.set_devices_info()\nOnce you configured the system\n\nConfigure the comments info\n\nIn most data acquisition software, you have the possibility to add information / comments about the measurement. These information will be available in the rawdata files, but how does the reflectance package can understand the meaning of the information you entered. This is what the set_comments_info is meant for.\n\nConfigure the filenaming info\n\nTable 2. Description of the set functions.\n\n\n\n\n\n\n\nset_colorimetry_info()\nconfigure the observer and illuminant default values\n\n\nset_comments_info()\nconfigure the comments that can be inserted in the rawdata files\n\n\n\n\nrf.set_fil\n\n\n\n\n\n\n\n\nrf.set_systems_info()",
+    "crumbs": [
+      "Home",
+      "Tutorials",
+      "Configuration functions"
+    ]
+  },
+  {
+    "objectID": "retrieve-test-datasets.html",
+    "href": "retrieve-test-datasets.html",
+    "title": "Retrieve dataset files",
+    "section": "",
+    "text": "Basic method\nThis page describes how to retrieve examples of interim files that can subsequently be used to explore the microfading package. Use the following steps to retrieve the dataset files in your notebook:\n\nOpen a jupyter notebook\nImport the reflectance package\nUse the get_datasets() function\n\n \n\nPython code examples\n\n\nimport reflectance as rf\n\nds = rf.get_datasets()\nds\n\n[PosixPath('/home/gpatin/anaconda3/lib/python3.13/site-packages/reflectance/datasets/2023-103_RS.2751MK.01_G01_edge_heritage_Shirley-Temple_2024-06-04_SP04.xlsx')]\n\n\n\n\nFunction description\nThe get_datasets() function has three optional parameters that allows you to filter the files:\n\ndevice (string) : Acronym of the spectrometer used to perform measurements. The default value is ‘AVT’ which will return the files taken with an Avantes spectrometer. There are currently four different spectrometers registered:\n\n‘AVT’: Avantes, AvaSpec-ULS-EVO-RS spectrometer\n‘KM’: Konica Minolta, CM-2600d spectrophotometer\n‘OO’: Ocean Optics, USB4000-VIS-NIR-ES spectrometer\n‘Tidas’: Tidas, S 400 spectrometer\n\nrawfiles (True or False) : you can decide to retrieve rawdata files or interim files. The former will enable you to run the process_rawdata() function, while the latter will allow you to directly create an RS class instance and explore the functionalities of the package.\nstdev (True or False) : you can decide to retrieve file with or without standard deviation values. This parameter only applies for the interim files.\n\n \n\nPython code examples\n\n\nimport reflectance as rf\n\n# retrieve the raw datafiles taken with a Tidas spectrometer\nds = rf.get_datasets(device='Tidas', rawfiles=True)\nds\n\n[PosixPath('/home/gpatin/anaconda3/lib/python3.13/site-packages/reflectance/datasets/2024-144_dayflower4_01_G01_0h_c01_000001.txt')]\n\n\n \n\nimport reflectance as rf\n\n# retrieve the interim datafiles taken with an Avantes spectrometer\nds = rf.get_datasets(device='AVT', rawfiles=False)\nds\n\n[PosixPath('/home/gpatin/anaconda3/lib/python3.13/site-packages/reflectance/datasets/2023-103_RS.2751MK.01_G01_edge_heritage_Shirley-Temple_2024-06-04_SP04.xlsx')]",
+    "crumbs": [
+      "Home",
+      "How-to-guides",
+      "Retrieve dataset files"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Welcome !",
+    "section": "",
+    "text": "Welcome on the documentation website of the reflectance python package. You will find on this website information and tutorials on how to install and use the reflectance package.\n\n\nIf you are a new user, look at the Get started section. It provides all the basic information you need to know about the package.\n\n\n\nWe are welcoming any contributions, comments (positive and negative), ideas, etc. This is important to improve the quality of the package and its documentation. If you have encountered a bug or spotted an error, please don’t hesitate to contact us by email (see below).\n\n\n\n\n\nflowchart BT\n    Start --&gt; Stop\n    Stop --&gt; Start\n\n\n\n\n\n\n\n\n\n\nThis package has been created to help with the manipulation of reflectance spectroscopic data.\n\n\n\nThe package provies computational tools to ease the manipulation of reflectance data. The activities where the package provides help can be categorized in three main groups:\n\nRawdata processing\n\nTransform the raw files produced by the spectrometer into a standardized file structure that is easier to read and which also contains metadata about the object and the analysis.\n\n\nVisualizations\n\nCreation of figures to visualize the spectral data and colorimetric coordinates (\\(L^*\\), \\(a^*\\), \\(b^*\\), \\(C^*\\), \\(h\\), \\(\\Delta E\\), etc.)\nTransform reflectance numerical data into colored swatches\n\n\nData manipulation\n\nPerform specific query on spectral and colorimetric data\nCompute mean and standard deviation values\nCompute delta values\n\n\n\n\n\nThe documentation follows the structure described by Daniele Procida, which organizes documentation into four different groups (Tutorials, How-to, Explanations, References).\n\n\n\nemail: microfading@mailo.com\n\n\n\nIf you are using this package for a publication, please cite the package as follows:\n\nPatin, G., 2025, Reflectance, Python Package, v.0.3.0, https://github.com/g-patin/reflectance",
+    "crumbs": [
+      "Home",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "index.html#new-users",
+    "href": "index.html#new-users",
+    "title": "Welcome !",
+    "section": "",
+    "text": "If you are a new user, look at the Get started section. It provides all the basic information you need to know about the package.",
+    "crumbs": [
+      "Home",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "index.html#contributions",
+    "href": "index.html#contributions",
+    "title": "Welcome !",
+    "section": "",
+    "text": "We are welcoming any contributions, comments (positive and negative), ideas, etc. This is important to improve the quality of the package and its documentation. If you have encountered a bug or spotted an error, please don’t hesitate to contact us by email (see below).\n\n\n\n\n\nflowchart BT\n    Start --&gt; Stop\n    Stop --&gt; Start",
+    "crumbs": [
+      "Home",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "index.html#what-is-this-package-about",
+    "href": "index.html#what-is-this-package-about",
+    "title": "Welcome !",
+    "section": "",
+    "text": "This package has been created to help with the manipulation of reflectance spectroscopic data.",
+    "crumbs": [
+      "Home",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "index.html#what-does-this-package-provide",
+    "href": "index.html#what-does-this-package-provide",
+    "title": "Welcome !",
+    "section": "",
+    "text": "The package provies computational tools to ease the manipulation of reflectance data. The activities where the package provides help can be categorized in three main groups:\n\nRawdata processing\n\nTransform the raw files produced by the spectrometer into a standardized file structure that is easier to read and which also contains metadata about the object and the analysis.\n\n\nVisualizations\n\nCreation of figures to visualize the spectral data and colorimetric coordinates (\\(L^*\\), \\(a^*\\), \\(b^*\\), \\(C^*\\), \\(h\\), \\(\\Delta E\\), etc.)\nTransform reflectance numerical data into colored swatches\n\n\nData manipulation\n\nPerform specific query on spectral and colorimetric data\nCompute mean and standard deviation values\nCompute delta values",
+    "crumbs": [
+      "Home",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "index.html#website-structure",
+    "href": "index.html#website-structure",
+    "title": "Welcome !",
+    "section": "",
+    "text": "The documentation follows the structure described by Daniele Procida, which organizes documentation into four different groups (Tutorials, How-to, Explanations, References).",
+    "crumbs": [
+      "Home",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "index.html#contact",
+    "href": "index.html#contact",
+    "title": "Welcome !",
+    "section": "",
+    "text": "email: microfading@mailo.com",
+    "crumbs": [
+      "Home",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "index.html#cite-package",
+    "href": "index.html#cite-package",
+    "title": "Welcome !",
+    "section": "",
+    "text": "If you are using this package for a publication, please cite the package as follows:\n\nPatin, G., 2025, Reflectance, Python Package, v.0.3.0, https://github.com/g-patin/reflectance",
+    "crumbs": [
+      "Home",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "create-RS-class-object.html",
+    "href": "create-RS-class-object.html",
+    "title": "Create RS class object",
+    "section": "",
+    "text": "Download the notebook\nThis section will show you how to create an instance of the Reflectance Spectroscopy (RS) class. The creation of the RS class is a two-steps procedure as described below:\n\n1. Get the interim files\n\nimport reflectance as rf\n\n\n# Here we are using the test datasets, but ideally you should use your own interim files.\nfiles_rs = rf.get_datasets()\n\n\n\n2. Create the RS class object\n\nrs = rf.RS(files=files_rs)\nrs\n\nReflectance data class - Number of files = 1",
+    "crumbs": [
+      "Home",
+      "How-to-guides",
+      "Create RS class object"
+    ]
+  },
+  {
+    "objectID": "rawdata-processing.html",
+    "href": "rawdata-processing.html",
+    "title": "Process rawdata files",
+    "section": "",
+    "text": "In this section, we will show you how to process rawdata files into and convert them into standard interim files, that are required to use the reflectance package.\nThe current version of the reflectance package can only process raw files obtained with the following devices:\nDon’t hesitate to contact us to discuss the possibility to process raw files obtained with other microfading systems.\nProcessing the rawdata files consists of two main steps:",
+    "crumbs": [
+      "Home",
+      "Tutorials",
+      "Process rawdata files"
+    ]
+  },
+  {
+    "objectID": "rawdata-processing.html#basic-use",
+    "href": "rawdata-processing.html#basic-use",
+    "title": "Process rawdata files",
+    "section": "Basic use",
+    "text": "Basic use\nThe code below describes the most basic way to process raw files. It does not make use of the information stored in the configuration file and database files, which is why the parameter db should be set to False.\nTo run the function, you will only need to give a list of your filepaths and the name of your device. The latter will have to be one of the acronyms below, depending on the files you are processing. You cannot process at the same time, rawdata files that have been obtained from different devices.\nList of device acronyms:\n\n‘ASD’ : Malvern Panalytical spectrometer, ASD LabSpec 4\n‘AVT’ : Avantes spectrometer, AvaSpec-ULS-EVO-RS, 2201504U1\n‘Tidas’ : Tidas spectrometer, S400 or S800\n\nThis way of processing the raw files is not recommended. While it does not impact the processing of the numerical data (colorimetric and spectral values), the metadata are almost non-existent. The real values of our analyses lies in our abilities to connect them with tangible aspects (objects, persons, devices), numerical values without context are meaningless.\n\nimport reflectance as rf\n\n\n# For this tutorial, I am using raw files available from the datasets of the reflectance package\nfiles_rs = rf.get_datasets(rawfiles=True)\n\n# if db is set to True, make sure that you have registered the device\nrf.process_rawdata(files=files_rs, device='AVT', db=False)",
+    "crumbs": [
+      "Home",
+      "Tutorials",
+      "Process rawdata files"
+    ]
+  },
+  {
+    "objectID": "rawdata-processing.html#advanced-use",
+    "href": "rawdata-processing.html#advanced-use",
+    "title": "Process rawdata files",
+    "section": "Advanced use",
+    "text": "Advanced use\nThis way of processing your data will enable you to add information about the object, the project, and the device.\nSee the configuration functions section for more information.",
+    "crumbs": [
+      "Home",
+      "Tutorials",
+      "Process rawdata files"
+    ]
+  },
+  {
+    "objectID": "installation.html",
+    "href": "installation.html",
+    "title": "Install package",
+    "section": "",
+    "text": "Install package\nTo install the latest version of the reflectance package, open a terminal and enter the following command:\n\npip install reflectance\n\nIf you wish to install a specific version of the reflectance package, the version number can be added to the pip command as illustrated in the following example:\n\npip install reflectance==0.1.1\n\n \n\n\nUpgrade package\nTo upgrade the package, open a terminal and enter the following command\n\npip install --upgrade reflectance",
+    "crumbs": [
+      "Home",
+      "Installation"
+    ]
+  }
+]
