@@ -23,13 +23,13 @@ website:
         - section: "Tutorials"   
           contents:
             - text: "Configuration functions"
-              href: configuration-functions.qmd
+              href: configuration-functions.ipynb
 
             - text: "Database management"
               href: create-databases.qmd           
 
             - text: "Process rawdata files"
-              href: rawdata-processing.qmd
+              href: rawdata-processing.ipynb
         
         - section: "How-to-guides"
           contents:
