@@ -1,0 +1,181 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"Get started\"\n",
+        "execute: \n",
+        "  output: true\n",
+        "format:\n",
+        "  html:\n",
+        "    code-fold: false\n",
+        "---\n",
+        "\n",
+        "In this section, we will give you all the essential information to correctly start using the `reflectance` package.\n",
+        "\n",
+        "## 1. **Do you have reflectance data files?**\n",
+        "\n",
+        "The whole package is based on reflectance data files that you either obtained yourself when performing reflectance measurements or obtained from someone else. Each file corresponds to a single measurement and consists of an excel file with a specific structure organizing the data inside the file. Check the [datafiles section](datafiles.qmd) for more information about the data files. \n",
+        "\t\n",
+        "If you don't have any reflectance files, the package has a function to load reflectance files, so that you can use these files to play with the functionalities of the package (see [get_datasets](https://g-patin.github.io/reflectance/get_datasets/) section).  \n",
+        "\t\n",
+        "If you have files, there are many possibilities to select and encapsulate your local files inside a python list object. I will show only one of the methods for which I will use the `glob` package.\n",
+        "&nbsp;"
+      ],
+      "id": "8df9b9ca"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# I use this package to select files on my local computer\n",
+        "from glob import glob "
+      ],
+      "id": "e2996790",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Using the glob method, I select the files that contain the words 'BW1' and 'RS' in the filename.\n",
+        "# Make\n",
+        "files = sorted(glob('*BW1*RS*'))"
+      ],
+      "id": "85097b8d",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "<div class=\"output-area\">\n",
+        "<pre>[PosixPath('/home/username/Documents/RS/2024-144_RS.BWS002.G01_avg_BW1_model_2024-07-30_SP2.xlsx'),\n",
+        "PosixPath('/home/username/Documents/RS/2024-144_RS.BWS003.G01_avg_BW1_model_2024-08-02_SP2.xlsx')]\n",
+        "</pre>\n",
+        "</div>\n",
+        "&nbsp;"
+      ],
+      "id": "9dd63845"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# I use the command 'cd <path>' to change the current directory and be in the folder where the reflectance files are.\n",
+        "#cd /home/username/Documents/RS\n",
+        "import reflectance as rf\n",
+        "files = rf.get_datasets(device='AVT',rawfiles=False)\n",
+        "files"
+      ],
+      "id": "db2e9065",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## 2. **Central role of the `RS` class**\n",
+        "\n",
+        "Once you have selected reflectance files and encapsulated them inside a python list, you will need to create an instance of the `RS` class passing the variable for your reflectance files as argument (see code below). Most of the functions provided by the package can only be accessed through the `RS` class.  \n",
+        "&nbsp;\n"
+      ],
+      "id": "aefe62a1"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import reflectance as rf"
+      ],
+      "id": "a4d95d83",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import reflectance as rf\n",
+        "files = rf.get_datasets(device='AVT',rawfiles=False)\n",
+        "rs = rf.RS(files=files)\n",
+        "print(files)"
+      ],
+      "id": "f772fb57",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "<div class=\"output-area\">\n",
+        "<pre>Reflectance data class - Number of files = 2\n",
+        "</pre>\n",
+        "</div>\n",
+        "\n",
+        "&nbsp;\n",
+        "\t\t\n",
+        "\t\n",
+        "## 3. **Three keywords function: get, plot, compute**\n",
+        "\n",
+        "Once you have created an instance of the `RS` class, you can access the functions. The name of each function starts by a verb: get, plot, or compute. Enter one of the verbs and use the auto-completion tool (`Tab` button) to display a list of available functions.\n",
+        "\n",
+        "![Alt text](images/mf_functions.png){: .img-medium align=left }\n",
+        "/// caption\n",
+        "List of all the plotting functions.\n",
+        "///\n",
+        "\t\n",
+        "The functions can be run without passing any arguments, this will output the default values. To adjust the output to your needs, you will need to modify the values of the arguments. For instance, the function `get_cielab()` returns the $\\Delta E_{00}$ values by default. If you want to retrieve other CIELAB coordinates, you will need to pass in a new value for the argument *coordinates* (see code below). To know the role of each argument in a function and which values can you pass in, you will need to read the documentation (see below). The latter can either be access in the jupyter notebook or in the [References section](https://g-patin.github.io/reflectance/references/) of this website.\n",
+        "\t\n",
+        "![Alt text](images/mf_functions_arguments.png){: .img-large align=left }\n",
+        "/// caption\n",
+        "Play with the argument values of functions \n",
+        "///\n",
+        "\n",
+        "\n",
+        "## 4. **Use the databases**\n",
+        "\n",
+        "If you are planning to perform reflectance measurements more than once, we advise you to make use of the databases. This will allow you to save metadata about the measured objects in the excel data file, which can ultimately be used to perform queries. For example, you could ask to retrieve all measurements performed on a given material or on objects created by a specific artist,etc. Unfortunately, such as a possibility has not been implemented yet.\n",
+        "\t\n",
+        "To start using the databases, you will first need to create them and fill them with some information. To learn how to create databases, see the [Create databases section](https://g-patin.github.io/reflectance/create-databases/). To learn how to fill the databases and properly manage them, see the [Databases management section](https://g-patin.github.io/reflectance/databases-management/). \n",
+        "\n",
+        "\n",
+        "## 5. **Use the docstrings**\n",
+        "\n",
+        "Whenever you will use functions from the `reflectance` package, you will always be able to access the docstrings. These contain valuable information that will help you to adequately use the functions. To open the dosctrings, you have two possibilites:\n",
+        "\n",
+        "1. Write the name of a function (without parentheses) followed by a question mark (see example below).\n",
+        "\n",
+        "\t![Alt text](images/mf_docstrings-example_02.png){: .img-Large align=left }\n",
+        "\t/// caption\n",
+        "\tOpening a docstring with a question mark.\n",
+        "\t///\n",
+        "\n",
+        "\n",
+        "2. Write the name of a function (with parentheses), place the cursor inside the parentheses and press `Ctrl + Caps Lock` (see example below).\n",
+        "\n",
+        "![Alt text](images/mf_docstrings-example_01.png){: .img-Large align=left }\n",
+        "/// caption\n",
+        "Opening a tooltip docstring window.\n",
+        "///"
+      ],
+      "id": "f50e6ec2"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "venv",
+      "language": "python",
+      "display_name": "venv",
+      "path": "/home/gpatin/.local/share/jupyter/kernels/venv"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
