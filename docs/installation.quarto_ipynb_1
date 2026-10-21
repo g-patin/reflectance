@@ -1,0 +1,83 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "execute: \n",
+        "  output: false\n",
+        "format:\n",
+        "  html:\n",
+        "    code-fold: false\n",
+        "---\n",
+        "\n",
+        "\n",
+        "# Install package\n",
+        "\n",
+        "To install the latest version of the reflectance package, open a terminal and enter the following command:"
+      ],
+      "id": "8187886e"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "pip install reflectance"
+      ],
+      "id": "2b904016",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "If you wish to install a specific version of the reflectance package, the version number can be added to the pip command as illustrated in the following example:"
+      ],
+      "id": "59828d53"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "pip install reflectance==0.1.1"
+      ],
+      "id": "7ed0ee5f",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "&nbsp;\n",
+        "\n",
+        "# Upgrade package\n",
+        "\n",
+        "To upgrade the package, open a terminal and enter the following command"
+      ],
+      "id": "19827c6c"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "pip install --upgrade reflectance"
+      ],
+      "id": "2906983e",
+      "execution_count": null,
+      "outputs": []
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "venv",
+      "language": "python",
+      "display_name": "venv",
+      "path": "/home/gpatin/.local/share/jupyter/kernels/venv"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
